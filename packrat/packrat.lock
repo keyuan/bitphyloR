@@ -1,0 +1,37 @@
+PackratFormat: 1.4
+PackratVersion: 0.4.0.12
+RVersion: 3.1.1
+Repos: CRAN=http://cran.rstudio.com,
+    BioCsoft=http://bioconductor.org/packages/2.14/bioc,
+    BioCann=http://bioconductor.org/packages/2.14/data/annotation,
+    BioCexp=http://bioconductor.org/packages/2.14/data/experiment,
+    BioCextra=http://bioconductor.org/packages/2.14/extra
+
+Package: BiocGenerics
+Source: Bioconductor
+Version: 0.10.0
+Hash: b6c70fc618424d8147d06f1b97858ceb
+
+Package: graph
+Source: CRAN
+Version: 1.42.0
+Requires: BiocGenerics
+
+Package: igraph
+Source: CRAN
+Version: 0.7.1
+Hash: e82d8e897ee5f480edb6a68b3d949dba
+
+Package: packrat
+Source: github
+Version: 0.4.0.12
+Hash: e738f79a22521c57fad67a1679302385973cd958
+GithubRepo: packrat
+GithubUsername: rstudio
+GithubRef: v0.98.1000
+GithubSha1: e738f79a22521c57fad67a1679302385973cd958
+
+Package: RBGL
+Source: CRAN
+Version: 1.40.1
+Requires: graph
