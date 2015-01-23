@@ -12,6 +12,11 @@ Source: Bioconductor
 Version: 0.10.0
 Hash: b6c70fc618424d8147d06f1b97858ceb
 
+Package: digest
+Source: CRAN
+Version: 0.6.8
+Hash: 89dc4c8734dad5322bb3c5c2af09056f
+
 Package: graph
 Source: Bioconductor
 Version: 1.42.0
@@ -42,3 +47,9 @@ Source: Bioconductor
 Version: 1.40.1
 Hash: b60140ba4c5f3bfa4bf075a4220f73c8
 Requires: graph
+
+Package: testthat
+Source: CRAN
+Version: 0.9.1
+Hash: 8b05e97c7401ae4f8b5dfbaa44cfcf20
+Requires: digest

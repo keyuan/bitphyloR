@@ -1,29 +1,52 @@
 Node <- R6Class(
-  classname <- "Node",
+  classname = "Node",
 
-  # Public ====================================================================#
-  public <- list(
-    ## Fields ----------------------------------------------------------------##
-    data <- list(),
-    tssb <- NA,
-    children <- list(),
-    parent <- NA,
-    ## -----------------------------------------------------------------------##
+  public = list(
 
-    ## Methods ---------------------------------------------------------------##
+    # fields
+    dataIds = list(),
+    tssb = NA,
+
+    # methods
     initialize = function(parent = NA, tssb = NA) {
-      self$parent <- parent
-      self$tssb <- tssb
+      if (!missing(parent)) private$parent <- parent
+      if (!missing(tssb)) self$tssb <- tssb
       },
 
-    AddChild <- function(child) {
-      if (!missing(child)) self$children <- c(self$children, child)
+    GetChildren = function() {
+      private$children
+    },
+
+    GetParent = function() {
+      private$parent
+    },
+
+    AddChild = function(child) {
+      if (!missing(child)) {
+        private$children <- c(private$children, child)
+      }
+      invisible(self)
+    },
+
+    RemoveChild = function(child) {
+      if (!missing(child)) {
+        private$children <- Filter(
+          Negate(
+            function(x) identical(child, x)
+            ),
+          private$children)
+      }
       invisible(self)
     }
-    ## end of methods --------------------------------------------------------##
+    ), # end of public
 
+  private = list(
+    # fields
+    children = list(),
+    parent = NA
     )
-  # End of public =============================================================#
   )
 
-
+n0 <- Node$new()
+n1 <- Node$new(parent = n0)
+n2 <- Node$new(parent = n0)
