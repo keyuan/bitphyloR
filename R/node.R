@@ -1,17 +1,26 @@
+library(R6)
+
 Node <- R6Class(
   classname = "Node",
 
   public = list(
-
     # fields
     dataIds = list(),
-    tssb = NA,
+    tssb = emptyenv(),
 
     # methods
-    initialize = function(parent = NA, tssb = NA) {
-      if (!missing(parent)) private$parent <- parent
-      if (!missing(tssb)) self$tssb <- tssb
+    initialize = function(parent = emptyenv(), tssb = emptyenv()) {
+      if (is.environment(parent) &&
+            !identical(parent, emptyenv()) &&
+            class(parent)[1] == "Node") {
+        private$parent <- parent
+        parent$AddChild(self)
+      } else {
+        private$parent <- parent
+      }
+      if (is.environment(tssb) ) self$tssb <- tssb
       },
+
 
     GetChildren = function() {
       private$children
@@ -37,13 +46,44 @@ Node <- R6Class(
           private$children)
       }
       invisible(self)
+    },
+
+    Kill = function() {
+      if (!identical(private$parent, emptyenv())) {
+        private$parent$RemoveChild(self)
+      }
+
+      private$children = NULL
+      private$parent = NULL
+    },
+
+    Spawn = function() {
+      Node$new(parent = self, tssb = self$tssb)
     }
+
+    HasData = function() {
+      if (length(self$dataIds)>0) {
+        return(TRUE)
+      } else {
+        Reduce()
+      }
+      }
+    }
+#     def has_data(self):
+#       if len(self.data):
+#       return True
+#     else:
+#       for child in self._children:
+#       if child.has_data():
+#       return True
+#     return False
+
     ), # end of public
 
   private = list(
     # fields
     children = list(),
-    parent = NA
+    parent = emptyenv()
     )
   )
 
