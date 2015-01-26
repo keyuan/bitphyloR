@@ -1,5 +1,14 @@
 library(R6)
 
+#' An example R6 class
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' @format An \code{\link{R6Class}} generator object
+#' @keywords data
+
+
 Node <- R6Class(
   classname = "Node",
 
