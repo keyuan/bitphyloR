@@ -12,6 +12,11 @@ Source: Bioconductor
 Version: 0.10.0
 Hash: b6c70fc618424d8147d06f1b97858ceb
 
+Package: brew
+Source: CRAN
+Version: 1.0-6
+Hash: 9d92cc5ac60123fdb7b0daa3ae83bf99
+
 Package: digest
 Source: CRAN
 Version: 0.6.8
@@ -47,6 +52,22 @@ Source: Bioconductor
 Version: 1.40.1
 Hash: b60140ba4c5f3bfa4bf075a4220f73c8
 Requires: graph
+
+Package: Rcpp
+Source: CRAN
+Version: 0.11.4
+Hash: 1f684f6afd28079e4e609b49f353e49f
+
+Package: roxygen2
+Source: CRAN
+Version: 4.1.0
+Hash: a11d0f31f8daf359c67e3e0c19d1e468
+Requires: brew, digest, Rcpp, stringr
+
+Package: stringr
+Source: CRAN
+Version: 0.6.2
+Hash: cdde0cfa0f52cffeaca23a11a3899779
 
 Package: testthat
 Source: CRAN
