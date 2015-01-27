@@ -1,6 +1,7 @@
 library(R6)
 
-#' An example R6 class
+#' R6 class for Node. Node is the basic object of each cluster in TSSB
+#' 
 #'
 #' @docType class
 #' @importFrom R6 R6Class
@@ -13,11 +14,11 @@ Node <- R6Class(
   classname = "Node",
 
   public = list(
-    # fields
-    dataIds = list(),
+    # Fields ------------------------------------------------------------------
+    dataIds = c(),
     tssb = emptyenv(),
 
-    # methods
+    # Methods -----------------------------------------------------------------
     initialize = function(parent = emptyenv(), tssb = emptyenv()) {
       if (is.environment(parent) &&
             !identical(parent, emptyenv()) &&
@@ -68,29 +69,57 @@ Node <- R6Class(
 
     Spawn = function() {
       Node$new(parent = self, tssb = self$tssb)
-    }
+    },
 
     HasData = function() {
-      if (length(self$dataIds)>0) {
+      if ( length(self$dataIds)>0 ) {
         return(TRUE)
       } else {
-        Reduce()
+        return(
+          sum(
+            unlist(sapply(private$children, function(x) x$HasData()))
+            )
+          > 0)
       }
+    },
+
+    AddDatum = function(id) {
+      if (!missing(id) && !id %in% self$dataIds) {
+        self$dataIds <- c(self$dataIds, id)
       }
+    },
+
+    RemoveDatum = function(id) {
+      if (!missing(id)) {
+        if (!id %in% self$dataIds) {
+          warning("id is not found in dataIds, nothing is removed")
+        } else {
+          self$dataIds <- self$dataIds[self$dataIds != id]
+        }
+      }
+    },
+
+    GetNumOfLocalData = function() {
+      length(self$dataIds)
+    },
+
+    GetNumOfSubTreeData = function() {
+        Reduce(
+          sum,
+          Map(function(x) x$GetNumOfSubTreeData(),
+              private$children),
+          length(self$dataIds)
+        )
+    },
+    
+    GetData = function() {
+      self$tssb[self.dataIds,]
     }
-#     def has_data(self):
-#       if len(self.data):
-#       return True
-#     else:
-#       for child in self._children:
-#       if child.has_data():
-#       return True
-#     return False
 
     ), # end of public
 
   private = list(
-    # fields
+    # Fields
     children = list(),
     parent = emptyenv()
     )
@@ -98,4 +127,10 @@ Node <- R6Class(
 
 n0 <- Node$new()
 n1 <- Node$new(parent = n0)
-n2 <- Node$new(parent = n0)
+n2 <- Node$new(parent = n1)
+n3 <- Node$new(parent = n2)
+
+n2$AddDatum(1)
+n1$AddDatum(2)
+n0$AddDatum(3)
+n3$AddDatum(5)
