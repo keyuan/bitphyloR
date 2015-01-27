@@ -17,10 +17,26 @@ Source: CRAN
 Version: 1.0-6
 Hash: 9d92cc5ac60123fdb7b0daa3ae83bf99
 
+Package: colorspace
+Source: CRAN
+Version: 1.2-4
+Hash: b775bd08a10f968fef582304b7c3ab9c
+
+Package: dichromat
+Source: CRAN
+Version: 2.0-0
+Hash: 42be2136555fa4b6167605df56d8cd7c
+
 Package: digest
 Source: CRAN
 Version: 0.6.8
 Hash: 89dc4c8734dad5322bb3c5c2af09056f
+
+Package: ggplot2
+Source: CRAN
+Version: 1.0.0
+Hash: c8bff66238347472f08b6a35608539ff
+Requires: digest, gtable, plyr, proto, reshape2, scales
 
 Package: graph
 Source: Bioconductor
@@ -28,10 +44,32 @@ Version: 1.42.0
 Hash: 93ec3415b9a554c327948ba70eccc00f
 Requires: BiocGenerics
 
+Package: gtable
+Source: CRAN
+Version: 0.1.2
+Hash: 0cf4a2b54c02b35dec7e74a8ebed12a0
+
 Package: igraph
 Source: CRAN
 Version: 0.7.1
 Hash: e82d8e897ee5f480edb6a68b3d949dba
+
+Package: labeling
+Source: CRAN
+Version: 0.3
+Hash: 568a992912caf7eeddfb121924154047
+
+Package: microbenchmark
+Source: CRAN
+Version: 1.4-2
+Hash: 658f0ab7fa41ec9c3187ffef516d6c4e
+Requires: ggplot2
+
+Package: munsell
+Source: CRAN
+Version: 0.4.2
+Hash: fa8af6d040041439b249351e9d16ae9a
+Requires: colorspace
 
 Package: packrat
 Source: github
@@ -41,6 +79,17 @@ GithubRepo: packrat
 GithubUsername: rstudio
 GithubRef: v0.98.1000
 GithubSha1: e738f79a22521c57fad67a1679302385973cd958
+
+Package: plyr
+Source: CRAN
+Version: 1.8.1
+Hash: 7dd935ee4050eaf2973108be2faf245e
+Requires: Rcpp
+
+Package: proto
+Source: CRAN
+Version: 0.3-10
+Hash: 668a9e87cedbdc5f56c396edf1bd2648
 
 Package: R6
 Source: CRAN
@@ -53,16 +102,33 @@ Version: 1.40.1
 Hash: b60140ba4c5f3bfa4bf075a4220f73c8
 Requires: graph
 
+Package: RColorBrewer
+Source: CRAN
+Version: 1.1-2
+Hash: 5203278413b09be06483c5ac1920bb05
+
 Package: Rcpp
 Source: CRAN
 Version: 0.11.4
 Hash: 1f684f6afd28079e4e609b49f353e49f
+
+Package: reshape2
+Source: CRAN
+Version: 1.4.1
+Hash: c401ef665db07687e1e54fbc60c683bb
+Requires: plyr, Rcpp, stringr
 
 Package: roxygen2
 Source: CRAN
 Version: 4.1.0
 Hash: a11d0f31f8daf359c67e3e0c19d1e468
 Requires: brew, digest, Rcpp, stringr
+
+Package: scales
+Source: CRAN
+Version: 0.2.4
+Hash: b8b1af97bd07818605223060386b00dd
+Requires: dichromat, labeling, munsell, plyr, RColorBrewer
 
 Package: stringr
 Source: CRAN
