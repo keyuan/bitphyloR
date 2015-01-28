@@ -4,14 +4,14 @@ TSSB <- R6Class(
     # Felids ------------------------------------------------------------------
     data = NULL,
     dpAlpha = NA,
-    dpGamma = NA, 
+    dpGamma = NA,
     minDepth = NA,
     maxDepth = NA,
     root = list(),
 
     # Methods -----------------------------------------------------------------
     initialize = function(rootNode = emptyenv(),
-                          dpAlpha = 1, 
+                          dpAlpha = 1,
                           dpGamma = 1,
                           data = NULL,
                           minDepth = 0,
@@ -33,28 +33,64 @@ TSSB <- R6Class(
           "chdren" = list())
         rootNode$tssb = self
       }
+    },
+
+    FindNode = function(u) {
+      desend = function(root, u, depth =0 ) {
+        if (depth >= self$maxDepth) {
+          warning("Reached maximum depth")
+          return(list(node = root$node, path = c()))
+        } else if (u < root$main) {
+          return(list(node = root$node, path = c()))
+        } else {
+          # Rescale the uniform variate to the remaining interval.
+          u = (u - root$main) / (1 - root$main)
+          while (length(root$children == 0)
+                 || u > (1 - prod(1 - root$sticks))
+                 ) {
+            root$sticks = c(root$sticks, rbeta(1, self$dpGamma))
+          }
+
+        }
+
+      }
     }
 
-    
-#     
-#     def __init__(self, dp_alpha=1.0, dp_gamma=1.0, root_node=None, data=None,
-#                  min_depth=0, max_depth=15, alpha_decay=1.0):
-#       if root_node is None:
-#       raise Exception("Root node must be specified.")
-#     
-#     self.min_depth   = min_depth
-#     self.max_depth   = max_depth
-#     self.dp_alpha    = dp_alpha
-#     self.dp_gamma    = dp_gamma
-#     self.alpha_decay = alpha_decay
-#     self.data        = data
-#     self.num_data    = 0 if data is None else data.shape[0]
-#     self.root        = { 'node'     : root_node,
-#                          'main'     : boundbeta(1.0, dp_alpha) if self.min_depth == 0 else 0.0,
-#                          'sticks'   : empty((0,1)),
-#                          'children' : [] }
+
+
+    def find_node(self, u):
+      def descend(root, u, depth=0):
+      if depth >= self.max_depth:
+      #print >>sys.stderr, "WARNING: Reached maximum depth."
+      return (root['node'], [])
+    elif u < root['main']:
+      return (root['node'], [])
+    else:
+      # Rescale the uniform variate to the remaining interval.
+      u = (u - root['main']) / (1.0 - root['main'])
+
+    # Perhaps break sticks out appropriately.
+    while not root['children'] or (1.0 - prod(1.0 - root['sticks'])) < u:
+      root['sticks'] = vstack([ root['sticks'], boundbeta(1, self.dp_gamma) ])
+    root['children'].append({ 'node'     : root['node'].spawn(),
+                              'main'     : boundbeta(1.0, (self.alpha_decay**(depth+1))*self.dp_alpha) if self.min_depth <= (depth+1) else 0.0,
+                              'sticks'   : empty((0,1)),
+                              'children' : [] })
+
+    edges = 1.0 - cumprod(1.0 - root['sticks'])
+    index = sum(u > edges)
+    edges = hstack([0.0, edges])
+    u     = (u - edges[index]) / (edges[index+1] - edges[index])
+
+    (node, path) = descend(root['children'][index], u, depth+1)
+
+    path.insert(0, index)
+
+    return (node, path)
+    return descend(self.root, u)
+
 #     root_node.tssb = self
-#     
+#
 #     if False:
 #       data_u           = rand(self.num_data)
 #     self.assignments = []
