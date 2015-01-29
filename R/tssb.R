@@ -1,3 +1,5 @@
+source("R/node.R")
+
 TSSB <- R6Class(
   classname = "TSSB",
   public = list(
@@ -5,14 +7,17 @@ TSSB <- R6Class(
     data = NULL,
     dpAlpha = NA,
     dpGamma = NA,
+    dpLambda = NA,
     minDepth = NA,
     maxDepth = NA,
     root = list(),
+    assignments = list(),
 
     # Methods -----------------------------------------------------------------
     initialize = function(rootNode = emptyenv(),
                           dpAlpha = 1,
                           dpGamma = 1,
+                          dpLambda = 1,
                           data = NULL,
                           minDepth = 0,
                           maxDepth = 15
@@ -21,75 +26,76 @@ TSSB <- R6Class(
             identical(rootNode, emptyenv()) ||
             class(rootNode)[1] != "Node") {
         stop("Root node must be specified")
-      } else {
-        self$data    = data
-        self$dpAlpha = dpAlpha
-        self$dpGamma = dpGamma
-        self$minDepth = minDepth
-        self$root = list(
-          "node"     = rootNode,
-          "main"     = if (self$minDepth == 0) rbeta(1, 1.0, self$dpAlpha) else 0,
-          "sticks"   = c(),
-          "chdren" = list())
-        rootNode$tssb = self
       }
+
+      self$data    <- data
+      self$dpAlpha <- dpAlpha
+      self$dpGamma <- dpGamma
+      self$minDepth <- minDepth
+      self$maxDepth <- maxDepth
+      self$dpLambda <- dpLambda
+      self$root <- list(
+        node     = rootNode,
+        main     = if (self$minDepth == 0) rbeta(1, 1, self$dpAlpha) else 0,
+        sticks   = c(),
+        children = list())
+      rootNode$tssb <- self
+
+      # Draw data assignments and a tree
+      for (n in 1:nrow(self$data)) {
+        cat(n, ": ")
+        u <- runif(1)
+        cat(u, "\n")
+        res <- self$FindNode(u)
+        self$assignments <- c(self$assignments, res$node)
+        self$root <- res$root
+      }
+
     },
 
     FindNode = function(u) {
-      desend = function(root, u, depth =0 ) {
+      descend <- function(root, u, depth = 0) {
         if (depth >= self$maxDepth) {
           warning("Reached maximum depth")
-          return(list(node = root$node, path = c()))
+          return(list(node = root$node, path = c(), root = root))
         } else if (u < root$main) {
-          return(list(node = root$node, path = c()))
+          return(list(node = root$node, path = c(), root = root))
         } else {
           # Rescale the uniform variate to the remaining interval.
-          u = (u - root$main) / (1 - root$main)
-          while (length(root$children == 0)
+          u <- (u - root$main) / (1 - root$main)
+          while (length(root$children) == 0
                  || u > (1 - prod(1 - root$sticks))
                  ) {
-            root$sticks = c(root$sticks, rbeta(1, self$dpGamma))
+            root$sticks <- c(root$sticks, rbeta(1, 1, self$dpGamma))
+            root$children <- c(root$children,
+                              list(
+                                list(
+                                  node = root$node$Spawn(),
+                                  main = if (self$minDepth <= (depth+1)) {
+                                    rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
+                                    } else {0},
+                                  sticks = c(),
+                                  children = list()
+                                  )
+                                )
+                              )
           }
-
-        }
-
+          edges <- 1 - cumprod(1 - root$sticks)
+          index <- sum(u > edges) + 1
+          edges <- c(0, edges)
+          tempu <- u
+          u     <- (u - edges[index]) / (edges[index+1] - edges[index])
+          res <- descend(root$children[[index]], u, depth+1)
+          node <- res$node
+          path <- res$path
+          path <- c(path,index)
+          root <- res$root
+          return(list(node = node, path = path, root = root))
+          }
       }
+      return(descend(self$root, u))
     }
 
-
-
-    def find_node(self, u):
-      def descend(root, u, depth=0):
-      if depth >= self.max_depth:
-      #print >>sys.stderr, "WARNING: Reached maximum depth."
-      return (root['node'], [])
-    elif u < root['main']:
-      return (root['node'], [])
-    else:
-      # Rescale the uniform variate to the remaining interval.
-      u = (u - root['main']) / (1.0 - root['main'])
-
-    # Perhaps break sticks out appropriately.
-    while not root['children'] or (1.0 - prod(1.0 - root['sticks'])) < u:
-      root['sticks'] = vstack([ root['sticks'], boundbeta(1, self.dp_gamma) ])
-    root['children'].append({ 'node'     : root['node'].spawn(),
-                              'main'     : boundbeta(1.0, (self.alpha_decay**(depth+1))*self.dp_alpha) if self.min_depth <= (depth+1) else 0.0,
-                              'sticks'   : empty((0,1)),
-                              'children' : [] })
-
-    edges = 1.0 - cumprod(1.0 - root['sticks'])
-    index = sum(u > edges)
-    edges = hstack([0.0, edges])
-    u     = (u - edges[index]) / (edges[index+1] - edges[index])
-
-    (node, path) = descend(root['children'][index], u, depth+1)
-
-    path.insert(0, index)
-
-    return (node, path)
-    return descend(self.root, u)
-
-#     root_node.tssb = self
 #
 #     if False:
 #       data_u           = rand(self.num_data)
@@ -105,3 +111,6 @@ TSSB <- R6Class(
 #     self.assignments.append(self.root['node'])
   )
 )
+
+tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1))
+print(length(unique(tssb$assignments)))
