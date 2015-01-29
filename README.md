@@ -1,2 +1,4 @@
 bitphyloR
 =========
+
+BitPhylogeny in R
