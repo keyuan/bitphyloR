@@ -1,7 +1,7 @@
 library(R6)
 
 #' R6 class for Node. Node is the basic object of each cluster in TSSB
-#' 
+#'
 #'
 #' @docType class
 #' @importFrom R6 R6Class
@@ -68,7 +68,8 @@ Node <- R6Class(
     },
 
     Spawn = function() {
-      Node$new(parent = self, tssb = self$tssb)
+      return(Node$new(parent = self, tssb = self$tssb))
+      #invisible(self)
     },
 
     HasData = function() {
@@ -111,7 +112,7 @@ Node <- R6Class(
           length(self$dataIds)
         )
     },
-    
+
     GetData = function() {
       self$tssb[self.dataIds,]
     }
@@ -126,11 +127,3 @@ Node <- R6Class(
   )
 
 n0 <- Node$new()
-n1 <- Node$new(parent = n0)
-n2 <- Node$new(parent = n1)
-n3 <- Node$new(parent = n2)
-
-n2$AddDatum(1)
-n1$AddDatum(2)
-n0$AddDatum(3)
-n3$AddDatum(5)
