@@ -43,9 +43,7 @@ TSSB <- R6Class(
 
       # Draw data assignments and a tree
       for (n in 1:nrow(self$data)) {
-        cat(n, ": ")
         u <- runif(1)
-        cat(u, "\n")
         res <- self$FindNode(u)
         self$assignments <- c(self$assignments, res$node)
         self$root <- res$root
@@ -113,4 +111,4 @@ TSSB <- R6Class(
 )
 
 tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1))
-print(length(unique(tssb$assignments)))
+
