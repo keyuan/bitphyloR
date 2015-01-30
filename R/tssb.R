@@ -43,8 +43,7 @@ TSSB <- R6Class(
 
       # Draw data assignments and a tree
       for (n in 1:nrow(self$data)) {
-        u <- runif(1)
-        res <- self$FindNode(u)
+        res <- self$FindNode(runif(1))
         self$assignments <- c(self$assignments, res$node)
         self$root <- res$root
       }
@@ -87,11 +86,15 @@ TSSB <- R6Class(
           node <- res$node
           path <- res$path
           path <- c(path,index)
-          root <- res$root
+          root$children[[index]] <- res$root
           return(list(node = node, path = path, root = root))
           }
       }
       return(descend(self$root, u))
+    },
+
+    ConvertTssb2Igraph = function(){
+
     }
 
 #
