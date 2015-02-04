@@ -8,5 +8,4 @@ Maintainer: Ke Yuan <ke.yuan.09@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: GPL-3
 Depends: R6, igraph
-Imports: cluster, mcclust, e1071, riverplot, plyr
 Suggests: testthat

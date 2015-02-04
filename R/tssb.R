@@ -1,5 +1,13 @@
-source("R/node.R")
-source("R/util.R")
+#' R6 class for TSSB. TSSB is the basic object of tree structured stick-breaking
+#' process
+#'
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' @format An \code{\link{R6Class}} generator object
+#' @keywords data
+
 
 TSSB <- R6Class(
   classname = "TSSB",
@@ -123,8 +131,8 @@ TSSB <- R6Class(
   )
 )
 
-tssb <- TSSB$new(n0, data = matrix(rnorm(50),10000,1))
-res <- tssb$GetMixture()
+# tssb <- TSSB$new(n0, data = matrix(rnorm(50),10000,1))
+# res <- tssb$GetMixture()
 
 # def get_mixture(self):
 #   def descend(root, mass):

@@ -1,5 +1,3 @@
-library(R6)
-
 #' R6 class for Node. Node is the basic object of each cluster in TSSB
 #'
 #'
