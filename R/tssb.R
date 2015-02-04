@@ -1,4 +1,5 @@
 source("R/node.R")
+source("R/util.R")
 
 TSSB <- R6Class(
   classname = "TSSB",
@@ -11,6 +12,7 @@ TSSB <- R6Class(
     minDepth = NA,
     maxDepth = NA,
     root = list(),
+    root1 = list(),
     assignments = list(),
 
     # Methods -----------------------------------------------------------------
@@ -20,7 +22,7 @@ TSSB <- R6Class(
                           dpLambda = 1,
                           data = NULL,
                           minDepth = 0,
-                          maxDepth = 15
+                          maxDepth = 25
                           ) {
       if (!is.environment(rootNode) ||
             identical(rootNode, emptyenv()) ||
@@ -47,7 +49,6 @@ TSSB <- R6Class(
         self$assignments <- c(self$assignments, res$node)
         self$root <- res$root
       }
-
     },
 
     FindNode = function(u) {
@@ -93,25 +94,50 @@ TSSB <- R6Class(
       return(descend(self$root, u))
     },
 
-    ConvertTssb2Igraph = function(){
+    GetMixture = function() {
+      descend <- function(root, mass) {
+        weight <- mass * root$main
+        node <- root$node
+        edges <- SticksToEdges(root$sticks)
+        weights <- diff(c(0, edges))
+
+        if (length(root$children) < 1) {
+          return(list(node = node, weight = weight))
+        } else {
+          for (i in 1:length(root$children)) {
+            child <- root$children[[i]]
+            res <- descend(child, mass*(1.0-root$main)*weights[i])
+            node <- c(node, res$node)
+            weight <- c(weight, res$weight)
+          }
+          return(list(node = node, weight = weight))
+        }
+      }
+      return(descend(self$root, 1.0))
+    },
+
+    ConvertTssbToIgraph = function() {
+
 
     }
-
-#
-#     if False:
-#       data_u           = rand(self.num_data)
-#     self.assignments = []
-#     for n in range(self.num_data):
-#       (c, path) = self.find_node(data_u[n])
-#     c.add_datum(n)
-#     self.assignments.append(c)
-#     else:
-#       self.assignments = []
-#     for n in range(self.num_data):
-#       self.root['node'].add_datum(n)
-#     self.assignments.append(self.root['node'])
   )
 )
 
-tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1))
+tssb <- TSSB$new(n0, data = matrix(rnorm(50),10000,1))
+res <- tssb$GetMixture()
+
+# def get_mixture(self):
+#   def descend(root, mass):
+#     weight  = [ mass * root['main'] ]
+#     node    = [ root['node'] ]
+#     edges   = sticks_to_edges(root['sticks'])
+#     weights = diff(hstack([0.0, edges]))
+#
+#     for i, child in enumerate(root['children']):
+#       (child_weights, child_nodes) = descend(child, mass*(1.0-root['main'])*weights[i])
+#     weight.extend(child_weights)
+#     node.extend(child_nodes)
+#     return (weight, node)
+#   return descend(self.root, 1.0)
+
 
