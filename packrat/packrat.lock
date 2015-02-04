@@ -27,6 +27,13 @@ Source: CRAN
 Version: 1.2-4
 Hash: b775bd08a10f968fef582304b7c3ab9c
 
+Package: devtools
+Source: CRAN
+Version: 1.7.0
+Hash: 56919e22e0d3f7131e93bda1a869730e
+Requires: digest, evaluate, httr, jsonlite, memoise, RCurl, roxygen2,
+    rstudioapi, whisker
+
 Package: dichromat
 Source: CRAN
 Version: 2.0-0
@@ -60,6 +67,12 @@ Source: CRAN
 Version: 0.1.2
 Hash: 0cf4a2b54c02b35dec7e74a8ebed12a0
 
+Package: httr
+Source: CRAN
+Version: 0.6.1
+Hash: 3b082465d75a7a0c3d09ad06a0905aff
+Requires: digest, jsonlite, mime, R6, RCurl, stringr
+
 Package: igraph
 Source: CRAN
 Version: 0.7.1
@@ -74,6 +87,17 @@ Package: labeling
 Source: CRAN
 Version: 0.3
 Hash: 568a992912caf7eeddfb121924154047
+
+Package: lpSolve
+Source: CRAN
+Version: 5.6.10
+Hash: 071e2e95569e0fe89f0c500c543d3cc3
+
+Package: mcclust
+Source: CRAN
+Version: 1.0
+Hash: 69301e88992d83d7b431bda0f7bd4ca5
+Requires: lpSolve
 
 Package: memoise
 Source: CRAN
