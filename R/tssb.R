@@ -55,6 +55,7 @@ TSSB <- R6Class(
       for (n in 1:nrow(self$data)) {
         res <- self$FindNode(runif(1))
         self$assignments <- c(self$assignments, res$node)
+        res$node$AddDatum(n)
         self$root <- res$root
       }
     },
@@ -125,8 +126,35 @@ TSSB <- R6Class(
     },
 
     ConvertTssbToIgraph = function() {
+      edges <- SticksToEdges(self$root$sticks)
+      weights <- diff(c(0, edges))
+      g <- graph.empty(directed = TRUE)
+      g <- g + vertex(name = "X",
+                      size = length(self$root$node$GetData()))
 
+      descend <- function(root, name, mass, g) {
+        total <- 0
+        edges <- SticksToEdges(root$sticks)
+        weights <- diff(c(0, edges))
 
+        for (i in 1:length(root$children)) {
+          child <- root$children[[i]]
+          childName <- paste(name, i, sep = "-")
+          childMass <- mass * weights[i] * child$main
+          g <- g + vertex(name = childName,
+                          size = length(child$node$GetData()))
+          g <- g + edge(name, childName, Value = length(child$node$GetData()))
+          tmp <- descend(child,
+                         childName,
+                         mass*weights[i] * (1.0 - child$main),
+                         g)
+          g <- tmp$g
+          total = total + child_mass + tmp$total
+        }
+        return(list(total, g))
+      }
+      res = descend(self$root, "X", 1, g)
+      return(res$g)
     }
   )
 )
@@ -148,4 +176,21 @@ TSSB <- R6Class(
 #     return (weight, node)
 #   return descend(self.root, 1.0)
 
+def tssb2igraph(self):
 
+  edges   = sticks_to_edges(self.root['sticks'])
+  weights = diff(hstack([0.0, edges]))
+  if len(weights) > 0:
+    root_mass = weights[0] * self.root['main']
+  else: #in case there is a problem with weights, as observed in some runs
+    root_mass = -1
+
+  g = Graph(directed = True)
+  g.add_vertex(name = "X",
+              params = " ".join(map(lambda x: "%.15f" %x,
+                                     self.root['node'].params)),
+              size = len(self.root['node'].get_data()),
+              mass = root_mass,
+              branch = self.root['node'].branch_length,
+              members = " ".join(map(lambda x: "%s" %x,
+                                      self.root['node'].data)) )
