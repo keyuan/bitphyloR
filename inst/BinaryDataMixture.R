@@ -1,6 +1,6 @@
 ## EM for Bernoulli and logistic mixtures
 ## Author: Ke Yuan
-library(Matrix)
+# library(Matrix)
 
 q = matrix(0,2,2)
 q[1,] = c(-1,1)

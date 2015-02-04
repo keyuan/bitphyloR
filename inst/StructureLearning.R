@@ -1,8 +1,7 @@
-library(igraph)
-library(RBGL) ## masks functions degree() edges() from graph and transitivity() from igraph
-## contains edmondsOptimumBranching()
-library(Matrix)
-rm(list = ls())
+# library(igraph)
+# library(RBGL) ## masks functions degree() edges() from graph and transitivity() from igraph
+# ## contains edmondsOptimumBranching()
+# library(Matrix)
 
 ## choose root
 setRoot <- function(W){
@@ -171,15 +170,15 @@ getDMST <- function(data, mode='methyl'){
 
 
 
-f1 <- '~/Dropbox/cancer-evolution/tssb/data/full_methy/noisy_full_methy_8_2000_genotype.csv'
-f2 <- '~/Dropbox/cancer-evolution/tssb/data/noisy-full-obs/noisy_fullsyn_8_2000_genotype.csv'
-
-data1 <- t(read.csv(f1, as.is=TRUE))
-data2 <- t(read.csv(f2, as.is=TRUE))
-
-tic <- proc.time()
-mst1 <- getDMST(data1, mode = 'methyl')
-mst2 <- getDMST(data2, mode = 'mut')
-toc <- proc.time()-tic
-
-stopCluster(cl)
+# f1 <- '~/Dropbox/cancer-evolution/tssb/data/full_methy/noisy_full_methy_8_2000_genotype.csv'
+# f2 <- '~/Dropbox/cancer-evolution/tssb/data/noisy-full-obs/noisy_fullsyn_8_2000_genotype.csv'
+#
+# data1 <- t(read.csv(f1, as.is=TRUE))
+# data2 <- t(read.csv(f2, as.is=TRUE))
+#
+# tic <- proc.time()
+# mst1 <- getDMST(data1, mode = 'methyl')
+# mst2 <- getDMST(data2, mode = 'mut')
+# toc <- proc.time()-tic
+#
+# stopCluster(cl)
