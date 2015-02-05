@@ -20,7 +20,6 @@ TSSB <- R6Class(
     minDepth = NA,
     maxDepth = NA,
     root = list(),
-    root1 = list(),
     assignments = list(),
 
     # Methods -----------------------------------------------------------------
@@ -61,12 +60,12 @@ TSSB <- R6Class(
     },
 
     FindNode = function(u) {
-      descend <- function(root, u, depth = 0) {
+      descend <- function(root, u, path = c(), depth = 0) {
         if (depth >= self$maxDepth) {
           warning("Reached maximum depth")
-          return(list(node = root$node, path = c(), root = root))
+          return(list(node = root$node, path = path, root = root))
         } else if (u < root$main) {
-          return(list(node = root$node, path = c(), root = root))
+          return(list(node = root$node, path = path, root = root))
         } else {
           # Rescale the uniform variate to the remaining interval.
           u <- (u - root$main) / (1 - root$main)
@@ -87,7 +86,7 @@ TSSB <- R6Class(
                                 )
                               )
           }
-          edges <- 1 - cumprod(1 - root$sticks)
+          edges <- SticksToEdges(root$sticks)
           index <- sum(u > edges) + 1
           edges <- c(0, edges)
           tempu <- u
@@ -130,67 +129,41 @@ TSSB <- R6Class(
       weights <- diff(c(0, edges))
       g <- graph.empty(directed = TRUE)
       g <- g + vertex(name = "X",
-                      size = length(self$root$node$GetData()))
+                      size = self$root$node$GetNumOfLocalData())
 
       descend <- function(root, name, mass, g) {
-        total <- 0
-        edges <- SticksToEdges(root$sticks)
-        weights <- diff(c(0, edges))
+        if (length(root$sticks) < 1){
+          return(list(total = mass, g=g))
+        } else {
+          total <- 0
+          edges <- SticksToEdges(root$sticks)
+          weights <- diff(c(0, edges))
 
-        for (i in 1:length(root$children)) {
-          child <- root$children[[i]]
-          childName <- paste(name, i, sep = "-")
-          childMass <- mass * weights[i] * child$main
-          g <- g + vertex(name = childName,
-                          size = length(child$node$GetData()))
-          g <- g + edge(name, childName, Value = length(child$node$GetData()))
-          tmp <- descend(child,
-                         childName,
-                         mass*weights[i] * (1.0 - child$main),
-                         g)
-          g <- tmp$g
-          total = total + child_mass + tmp$total
+          for (i in 1:length(root$children)) {
+            child <- root$children[[i]]
+            childName <- paste(name, i, sep = "-")
+            childMass <- mass * weights[i] * child$main
+            g <- g + vertex(name = childName,
+                            size = child$node$GetNumOfLocalData())
+            g <- g + edge(name, childName,
+                          Value = child$node$GetNumOfLocalData())
+            tmp <- descend(child,
+                           childName,
+                           mass*weights[i] * (1.0 - child$main),
+                           g)
+            g <- tmp$g
+            total = total + childMass + tmp$total
+          }
+          return(list(total=total, g=g))
         }
-        return(list(total, g))
       }
-      res = descend(self$root, "X", 1, g)
-      return(res$g)
-    }
+    res = descend(self$root, "X", 1, g)
+    return(res)
+    },
+
+    CullTree = function() {}
+
   )
 )
 
-# tssb <- TSSB$new(n0, data = matrix(rnorm(50),10000,1))
-# res <- tssb$GetMixture()
 
-# def get_mixture(self):
-#   def descend(root, mass):
-#     weight  = [ mass * root['main'] ]
-#     node    = [ root['node'] ]
-#     edges   = sticks_to_edges(root['sticks'])
-#     weights = diff(hstack([0.0, edges]))
-#
-#     for i, child in enumerate(root['children']):
-#       (child_weights, child_nodes) = descend(child, mass*(1.0-root['main'])*weights[i])
-#     weight.extend(child_weights)
-#     node.extend(child_nodes)
-#     return (weight, node)
-#   return descend(self.root, 1.0)
-
-def tssb2igraph(self):
-
-  edges   = sticks_to_edges(self.root['sticks'])
-  weights = diff(hstack([0.0, edges]))
-  if len(weights) > 0:
-    root_mass = weights[0] * self.root['main']
-  else: #in case there is a problem with weights, as observed in some runs
-    root_mass = -1
-
-  g = Graph(directed = True)
-  g.add_vertex(name = "X",
-              params = " ".join(map(lambda x: "%.15f" %x,
-                                     self.root['node'].params)),
-              size = len(self.root['node'].get_data()),
-              mass = root_mass,
-              branch = self.root['node'].branch_length,
-              members = " ".join(map(lambda x: "%s" %x,
-                                      self.root['node'].data)) )
