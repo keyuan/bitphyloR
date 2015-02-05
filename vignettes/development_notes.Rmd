@@ -1,0 +1,29 @@
+---
+title: "Development notes for bitphyloR"
+author: "Ke Yuan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+
+# Testing TSSB class
+
+```{r}
+library(bitphyloR)
+n0 <- Node$new()
+tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
+                 dpLambda = 1)
+res <- tssb$GetMixture()
+barplot(res$weight)
+```
+
+```{r}
+tssb$FindNode(runif(1))
+```
+
+
+
