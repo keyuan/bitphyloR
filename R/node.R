@@ -112,7 +112,7 @@ Node <- R6Class(
     },
 
     GetData = function() {
-      self$tssb[self.dataIds,]
+      self$tssb$data[self$dataIds,]
     }
 
     ), # end of public
@@ -124,4 +124,4 @@ Node <- R6Class(
     )
   )
 
-n0 <- Node$new()
+
