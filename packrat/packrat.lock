@@ -22,6 +22,12 @@ Source: CRAN
 Version: 1.0-6
 Hash: 9d92cc5ac60123fdb7b0daa3ae83bf99
 
+Package: caTools
+Source: CRAN
+Version: 1.17.1
+Hash: bb5fdc266f716b8a289a4f92007d53e3
+Requires: bitops
+
 Package: colorspace
 Source: CRAN
 Version: 1.2-4
@@ -50,6 +56,11 @@ Version: 0.5.5
 Hash: 20881970e590ee68de97a468694db7b0
 Requires: stringr
 
+Package: formatR
+Source: CRAN
+Version: 1.0
+Hash: a90c211d7df7e61a72b8ab6c99c2e848
+
 Package: ggplot2
 Source: CRAN
 Version: 1.0.0
@@ -67,6 +78,17 @@ Source: CRAN
 Version: 0.1.2
 Hash: 0cf4a2b54c02b35dec7e74a8ebed12a0
 
+Package: highr
+Source: CRAN
+Version: 0.4
+Hash: 8c77cca8556e1501621b4a5ccb7999bd
+
+Package: htmltools
+Source: CRAN
+Version: 0.2.6
+Hash: 2c87108d130de261ac3c468d3316ae42
+Requires: digest
+
 Package: httr
 Source: CRAN
 Version: 0.6.1
@@ -83,6 +105,12 @@ Source: CRAN
 Version: 0.9.14
 Hash: 1e949c7f0f926734e2ff498eddb2309a
 
+Package: knitr
+Source: CRAN
+Version: 1.9
+Hash: 41c29594ced4d02b3b90b4c375680cd3
+Requires: digest, evaluate, formatR, highr, markdown, stringr
+
 Package: labeling
 Source: CRAN
 Version: 0.3
@@ -92,6 +120,12 @@ Package: lpSolve
 Source: CRAN
 Version: 5.6.10
 Hash: 071e2e95569e0fe89f0c500c543d3cc3
+
+Package: markdown
+Source: CRAN
+Version: 0.7.4
+Hash: 01d7f71ed6e3d9b1c17ba51cff91be72
+Requires: mime
 
 Package: mcclust
 Source: CRAN
@@ -175,6 +209,12 @@ Version: 1.4.1
 Hash: c401ef665db07687e1e54fbc60c683bb
 Requires: plyr, Rcpp, stringr
 
+Package: rmarkdown
+Source: CRAN
+Version: 0.5.1
+Hash: 2d87f70c12c5558c50c4b3587fc6f499
+Requires: caTools, htmltools, knitr, yaml
+
 Package: roxygen2
 Source: CRAN
 Version: 4.1.0
@@ -207,3 +247,8 @@ Package: whisker
 Source: CRAN
 Version: 0.3-2
 Hash: 186ab2937fec1694c8a63009a2389c4e
+
+Package: yaml
+Source: CRAN
+Version: 2.1.13
+Hash: e5d041c001f6d641fd009c1f6ef7d831
