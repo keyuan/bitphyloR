@@ -13,5 +13,10 @@ TSSB
 R6 class for TSSB. TSSB is the basic object of tree structured stick-breaking
 process
 }
+\section{Fields}{
+
+\describe{
+\item{\code{data}}{}
+}}
 \keyword{data}
 
