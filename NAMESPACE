@@ -2,4 +2,7 @@
 
 export(Node)
 export(TSSB)
+export(TssbBatchVB)
+export(TssbMCMC)
+export(TssbSVB)
 importFrom(R6,R6Class)
