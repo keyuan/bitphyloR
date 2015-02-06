@@ -7,6 +7,7 @@
 #' @export
 #' @format An \code{\link{R6Class}} generator object
 #' @keywords data
+#' @field data
 
 
 TSSB <- R6Class(
@@ -89,7 +90,6 @@ TSSB <- R6Class(
           edges <- SticksToEdges(root$sticks)
           index <- sum(u > edges) + 1
           edges <- c(0, edges)
-          tempu <- u
           u     <- (u - edges[index]) / (edges[index+1] - edges[index])
           res <- descend(root$children[[index]], u, depth+1)
           node <- res$node
@@ -101,6 +101,7 @@ TSSB <- R6Class(
       }
       return(descend(self$root, u))
     },
+
 
     GetMixture = function() {
       descend <- function(root, mass) {
@@ -149,7 +150,7 @@ TSSB <- R6Class(
                           Value = child$node$GetNumOfLocalData())
             tmp <- descend(child,
                            childName,
-                           mass*weights[i] * (1.0 - child$main),
+                           mass*weights[i]*(1.0 - child$main),
                            g)
             g <- tmp$g
             total = total + childMass + tmp$total
@@ -162,8 +163,50 @@ TSSB <- R6Class(
     },
 
     CullTree = function() {}
-
   )
 )
 
+#' R6 class for inference via MCMC for TSSB.
+#'
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' @format An \code{\link{R6Class}} generator object
+#' @keywords data
+
+TssbMCMC <- R6Class(
+  classname = "TssbMCMC",
+  inherit = TSSB
+)
+
+
+#' R6 class for inference via Batch variational Bayes for TSSB.
+#'
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' @format An \code{\link{R6Class}} generator object
+#' @keywords data
+
+TssbBatchVB <- R6Class(
+  classname = "TssbBatchVB",
+  inherit = TSSB
+)
+
+#' R6 class for inference via stochastic variational Bayes for TSSB.
+#'
+#'
+#' @docType class
+#' @importFrom R6 R6Class
+#' @export
+#' @format An \code{\link{R6Class}} generator object
+#' @keywords data
+
+TssbSVB <- R6Class(
+  classname = "TssbSVB",
+  inherit = TSSB
+
+)
 
