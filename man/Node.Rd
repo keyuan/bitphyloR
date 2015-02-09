@@ -11,5 +11,16 @@ Node
 \description{
 R6 class for Node. Node is the basic object of each cluster in TSSB
 }
+\section{Fields}{
+
+\describe{
+\item{\code{dataIds:}}{data IDs}
+
+\item{\code{tssb:}}{A TSSB object}
+
+\item{\code{children:}}{descentant node objects}
+
+\item{\code{parent:}}{parent node object}
+}}
 \keyword{data}
 
