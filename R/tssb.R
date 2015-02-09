@@ -61,7 +61,7 @@ TSSB <- R6Class(
     },
 
     FindNode = function(u) {
-      descend <- function(root, u, path = c(), depth = 0) {
+      Descend <- function(root, u, path = c(), depth = 0) {
         if (depth >= self$maxDepth) {
           warning("Reached maximum depth")
           return(list(node = root$node, path = path, root = root))
@@ -91,7 +91,7 @@ TSSB <- R6Class(
           index <- sum(u > edges) + 1
           edges <- c(0, edges)
           u     <- (u - edges[index]) / (edges[index+1] - edges[index])
-          res <- descend(root$children[[index]], u, depth+1)
+          res <- Descend(root$children[[index]], u, depth+1)
           node <- res$node
           path <- res$path
           path <- c(path,index)
@@ -99,12 +99,12 @@ TSSB <- R6Class(
           return(list(node = node, path = path, root = root))
           }
       }
-      return(descend(self$root, u))
+      return(Descend(self$root, u))
     },
 
 
     GetMixture = function() {
-      descend <- function(root, mass) {
+      Descend <- function(root, mass) {
         weight <- mass * root$main
         node <- root$node
         edges <- SticksToEdges(root$sticks)
@@ -115,14 +115,14 @@ TSSB <- R6Class(
         } else {
           for (i in 1:length(root$children)) {
             child <- root$children[[i]]
-            res <- descend(child, mass*(1.0-root$main)*weights[i])
+            res <- Descend(child, mass*(1.0-root$main)*weights[i])
             node <- c(node, res$node)
             weight <- c(weight, res$weight)
           }
           return(list(node = node, weight = weight))
         }
       }
-      return(descend(self$root, 1.0))
+      return(Descend(self$root, 1.0))
     },
 
     ConvertTssbToIgraph = function() {
@@ -132,7 +132,7 @@ TSSB <- R6Class(
       g <- g + vertex(name = "X",
                       size = self$root$node$GetNumOfLocalData())
 
-      descend <- function(root, name, mass, g) {
+      Descend <- function(root, name, mass, g) {
         if (length(root$sticks) < 1){
           return(list(total = mass, g=g))
         } else {
@@ -148,7 +148,7 @@ TSSB <- R6Class(
                             size = child$node$GetNumOfLocalData())
             g <- g + edge(name, childName,
                           Value = child$node$GetNumOfLocalData())
-            tmp <- descend(child,
+            tmp <- Descend(child,
                            childName,
                            mass*weights[i]*(1.0 - child$main),
                            g)
@@ -158,11 +158,25 @@ TSSB <- R6Class(
           return(list(total=total, g=g))
         }
       }
-    res = descend(self$root, "X", 1, g)
+    res = Descend(self$root, "X", 1, g)
     return(res)
     },
 
-    CullTree = function() {}
+    CullTree = function() {
+      Descend <- function(root){
+        res <- unlist(Map(Descend(root<<-x), root$children))
+        counts <- res[seq(1, length(res), by = 2)]
+        keep <- length(TrimZeros(counts, trim = "b"))
+
+        for (i in (keep + 1):length(counts)) {
+          children[[i]]$node.Kill()
+        }
+        root$sticks   <<- root$sticks[1:keep]
+        root$children <<- root$children[1:keep]
+        return sum(counts) + root$node$GetNumOfLocalData()
+      }
+
+    }
   )
 )
 
