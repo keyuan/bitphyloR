@@ -6,8 +6,11 @@
 #' @export
 #' @format An \code{\link{R6Class}} generator object
 #' @keywords data
-
-
+#' @field dataIds: data IDs
+#' @field tssb: A TSSB object
+#' @field children: descentant node objects
+#' @field parent: parent node object
+#' @method initialize
 Node <- R6Class(
   classname = "Node",
 
