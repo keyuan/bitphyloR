@@ -5,4 +5,16 @@ res <- tssb$GetMixture()
 
 res1 <- tssb$ConvertTssbToIgraph()
 
-plot(res1$g)
+TestDescend <- function(root){
+  Descend <- function(root) {
+    if (!is.null(root$sticks)) {
+      root$main <- length(root$children)
+      for (i in 1:length(root$children)) {
+        Descend(root <<- root$children[[i]])
+      }
+    }
+    return(root)
+  }
+  return(Descend(root<<-root))
+}
+TestDescend(root<<-tssb$root)
