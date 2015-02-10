@@ -164,18 +164,20 @@ TSSB <- R6Class(
 
     CullTree = function() {
       Descend <- function(root){
-        res <- unlist(Map(Descend(root<<-x), root$children))
+        res <- unlist(Map(Descend, root$children), recursive = FALSE)
         counts <- res[seq(1, length(res), by = 2)]
+        root$children <- sapply(res[seq(2, length(res), by = 2)], list)
         keep <- length(TrimZeros(counts, trim = "b"))
 
         for (i in (keep + 1):length(counts)) {
           children[[i]]$node.Kill()
         }
-        root$sticks   <<- root$sticks[1:keep]
-        root$children <<- root$children[1:keep]
-        return sum(counts) + root$node$GetNumOfLocalData()
-      }
 
+        root$sticks <- root$sticks[1:keep]
+        root$children <- root$children[1:keep]
+        return(list(counts = sum(counts) + root$node$GetNumOfLocalData(),
+                    root = root))
+      }
     }
   )
 )
