@@ -16,6 +16,10 @@ SticksToEdges <- function(sticks){
 #' @export
 TrimZeros <- function(x, trim = "fb") {
   nonZeroIds <- which(x != 0)
+  if (length(nonZeroIds) == 0) {
+    return(c())
+  }
+
   if (trim == "fb") {
     return(x[min(nonZeroIds):max(nonZeroIds)])
   } else if (trim == "f") {
