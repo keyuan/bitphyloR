@@ -1,3 +1,6 @@
+
+# TSSB  -------------------------------------------------------------------
+
 #' R6 class for TSSB. TSSB is the basic object of tree structured stick-breaking
 #' process
 #'
@@ -8,8 +11,6 @@
 #' @format An \code{\link{R6Class}} generator object
 #' @keywords data
 #' @field data
-
-
 TSSB <- R6Class(
   classname = "TSSB",
   public = list(
@@ -163,24 +164,33 @@ TSSB <- R6Class(
     },
 
     CullTree = function() {
-      Descend <- function(root){
-        res <- unlist(Map(Descend, root$children), recursive = FALSE)
-        counts <- res[seq(1, length(res), by = 2)]
-        root$children <- sapply(res[seq(2, length(res), by = 2)], list)
-        keep <- length(TrimZeros(counts, trim = "b"))
+      Descend <- function(root) {
+        res <- unlist(Map(Descend, root$children), recursive = F, use.names = F)
 
-        for (i in (keep + 1):length(counts)) {
-          children[[i]]$node.Kill()
+        if (length(res) == 0) {
+          return(list(counts = root$node$GetNumOfLocalData(), root = root))
         }
+        counts <- unlist(res[seq(1, length(res), by = 2)])
+        root$children <- res[seq(2, length(res), by = 2)]
+        keep <- which(counts != 0)
 
-        root$sticks <- root$sticks[1:keep]
-        root$children <- root$children[1:keep]
+        if (length(keep) == 0) {
+          root$sticks <- NULL
+          root$children <- list()
+        } else {
+          root$sticks <- root$sticks[keep]
+          root$children <- root$children[keep]
+        }
         return(list(counts = sum(counts) + root$node$GetNumOfLocalData(),
                     root = root))
       }
+      res <- Descend(self$root)
+      self$root <- res$root
     }
   )
 )
+
+
 
 #' R6 class for inference via MCMC for TSSB.
 #'
@@ -211,6 +221,17 @@ TssbBatchVB <- R6Class(
   inherit = TSSB
 )
 
+
+
+# MCMC --------------------------------------------------------------------
+
+
+# Batch VB ----------------------------------------------------------------
+
+
+# Stochastic VB -----------------------------------------------------------
+
+
 #' R6 class for inference via stochastic variational Bayes for TSSB.
 #'
 #'
@@ -223,6 +244,5 @@ TssbBatchVB <- R6Class(
 TssbSVB <- R6Class(
   classname = "TssbSVB",
   inherit = TSSB
-
 )
 
