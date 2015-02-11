@@ -12,17 +12,35 @@ vignette: >
 
 # Testing TSSB class
 
+Initiating a `Node` object 
 ```{r}
 library(bitphyloR)
 n0 <- Node$new()
+```
+
+```{r}
 tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
                  dpLambda = 1)
+```
+
+```{r}
 res <- tssb$GetMixture()
 barplot(res$weight)
 ```
 
+
 ```{r}
-tssb$FindNode(runif(1))
+res2 <- tssb$ConvertTssbToIgraph()
+g <- res2$g
+plot(g, layout = )
+```
+
+```{r}
+tssb$CullTree()
+res3 <- tssb$ConvertTssbToIgraph()
+g <- res3$g
+plot(g)
+
 ```
 
 
