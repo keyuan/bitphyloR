@@ -41,8 +41,13 @@ Node <- R6Class(
       private$parent
     },
 
+    SetParent = function(parent = emptyenv()) {
+      private$parent <- parent
+    }
+
     AddChild = function(child) {
       if (!missing(child)) {
+        child$SetParent(self)
         private$children <- c(private$children, child)
       }
       invisible(self)
@@ -50,6 +55,7 @@ Node <- R6Class(
 
     RemoveChild = function(child) {
       if (!missing(child)) {
+        child$SetParent()
         private$children <- Filter(
           Negate(
             function(x) identical(child, x)
@@ -62,15 +68,14 @@ Node <- R6Class(
     Kill = function() {
       if (!identical(private$parent, emptyenv())) {
         private$parent$RemoveChild(self)
+        sapply(private$children, private$parent$AddChild)
       }
-
       private$children = NULL
       private$parent = NULL
     },
 
     Spawn = function() {
       return(Node$new(parent = self, tssb = self$tssb))
-      #invisible(self)
     },
 
     HasData = function() {
@@ -116,6 +121,17 @@ Node <- R6Class(
 
     GetData = function() {
       self$tssb$data[self$dataIds,]
+    },
+
+    GetAncestors = function() {
+      ancestors = c()
+      if (identical(private$parent, emptyenv())) {
+        return(self)
+      } else {
+        ancestors <- c(private$parent$GetAncestors(), self)
+        return(ancestors)
+      }
+
     }
 
     ), # end of public
