@@ -23,6 +23,7 @@ TSSB <- R6Class(
     maxDepth = NA,
     root = list(),
     assignments = list(),
+    numOfData = NA
 
     # Methods -----------------------------------------------------------------
     initialize = function(rootNode = emptyenv(),
@@ -45,6 +46,7 @@ TSSB <- R6Class(
       self$minDepth <- minDepth
       self$maxDepth <- maxDepth
       self$dpLambda <- dpLambda
+      self$numOfData <- if (is.null(data)) 0 else nrow(self$data)
       self$root <- list(
         node     = rootNode,
         main     = if (self$minDepth == 0) rbeta(1, 1, self$dpAlpha) else 0,
@@ -53,7 +55,7 @@ TSSB <- R6Class(
       rootNode$tssb <- self
 
       # Draw data assignments and a tree
-      for (n in 1:nrow(self$data)) {
+      for (n in 1:self$numOfData)) {
         res <- self$FindNode(runif(1))
         self$assignments <- c(self$assignments, res$node)
         res$node$AddDatum(n)
@@ -174,6 +176,8 @@ TSSB <- R6Class(
         root$children <- res[seq(2, length(res), by = 2)]
         keep <- which(counts != 0)
 
+        sapply(root$children[which(counts == 0)], function(x) x$node$Kill())
+
         if (length(keep) == 0) {
           root$sticks <- NULL
           root$children <- list()
@@ -186,11 +190,12 @@ TSSB <- R6Class(
       }
       res <- Descend(self$root)
       self$root <- res$root
+      invisible(self)
     }
   )
 )
 
-
+# MCMC --------------------------------------------------------------------
 
 #' R6 class for inference via MCMC for TSSB.
 #'
@@ -203,8 +208,25 @@ TSSB <- R6Class(
 
 TssbMCMC <- R6Class(
   classname = "TssbMCMC",
-  inherit = TSSB
+  inherit = TSSB,
+
+  public = list(
+    ResampleAssignments = function() {
+      epsilon <- 2.2204460492503131e-16
+      lengths <- []
+      reassign <- 0
+      better <- 0
+
+      for (n in 1:self$numOfData) {
+        ancestors <- self$assignments[n]$GetAncestors()
+      }
+    }
+
+    )
 )
+
+
+# Batch VB ----------------------------------------------------------------
 
 
 #' R6 class for inference via Batch variational Bayes for TSSB.
@@ -220,13 +242,6 @@ TssbBatchVB <- R6Class(
   classname = "TssbBatchVB",
   inherit = TSSB
 )
-
-
-
-# MCMC --------------------------------------------------------------------
-
-
-# Batch VB ----------------------------------------------------------------
 
 
 # Stochastic VB -----------------------------------------------------------
