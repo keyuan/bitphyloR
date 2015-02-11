@@ -19,6 +19,7 @@ n0 <- Node$new()
 ```
 
 ```{r}
+set.seed(9)
 tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
                  dpLambda = 1)
 ```
@@ -32,16 +33,31 @@ barplot(res$weight)
 ```{r}
 res2 <- tssb$ConvertTssbToIgraph()
 g <- res2$g
-plot(g, layout = )
+plot.igraph(g, layout = layout.reingold.tilford(g), 
+     vertex.label = get.vertex.attribute(g, name = "size"),
+     edge.arrow.size = 0.1)
 ```
 
 ```{r}
 tssb$CullTree()
 res3 <- tssb$ConvertTssbToIgraph()
 g <- res3$g
-plot(g)
+plot.igraph(g, layout = layout.reingold.tilford(g), 
+     vertex.label = get.vertex.attribute(g, name = "size"),
+     edge.arrow.size = 0.1)
 
 ```
 
 
+# Inference objects 
+```{r}
+n0 <- Node$new()
+set.seed(9)
+tssbMCMC <- TssbMCMC$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
+                 dpLambda = 1)
+```
 
+```{r}
+res <- tssbMCMC$GetMixture()
+barplot(res$weight)
+```
