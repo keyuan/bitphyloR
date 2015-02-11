@@ -12,11 +12,6 @@ Source: Bioconductor
 Version: 0.10.0
 Hash: b6c70fc618424d8147d06f1b97858ceb
 
-Package: BiocInstaller
-Source: Bioconductor
-Version: 1.16.1
-Hash: 8772a5d8d140f2083669934c97975ae6
-
 Package: bitops
 Source: CRAN
 Version: 1.0-6
@@ -208,12 +203,6 @@ Version: 1.95-4.5
 Hash: 1187c1ea73013abf25f362a7e6da1046
 Requires: bitops
 
-Package: RedeR
-Source: Bioconductor
-Version: 1.14.7
-Hash: bb1e60856b672fb17be15ad27e8c3005
-Requires: igraph, RCurl, XML
-
 Package: reshape2
 Source: CRAN
 Version: 1.4.1
@@ -258,11 +247,6 @@ Package: whisker
 Source: CRAN
 Version: 0.3-2
 Hash: 186ab2937fec1694c8a63009a2389c4e
-
-Package: XML
-Source: CRAN
-Version: 3.98-1.1
-Hash: 13746d37588e7083349177d6e8234864
 
 Package: yaml
 Source: CRAN
