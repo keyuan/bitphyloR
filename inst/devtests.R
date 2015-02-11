@@ -1,35 +1,18 @@
 n0 <- Node$new()
-tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1/5,
-                 dpLambda = 1/2)
+tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
+                 dpLambda = 1)
 res1 <- tssb$GetMixture()
-
-sapply(res1$node, function(x) x$GetNumOfLocalData())
-
 res2 <- tssb$ConvertTssbToIgraph()
+
+plot(res2$g, layout = layout.reingold.tilford(res2$g),
+     vertex.label = get.vertex.attribute(res2$g, name = "size"))
 
 tt <- tssb$root
 
+tssb$CullTree()
 
-Descend1 <- function(root) {
-  res <- unlist(Map(Descend1, root$children), recursive = F, use.names = F)
-  if (length(res) == 0) {
-    return(list(counts = root$node$GetNumOfLocalData(), root = root))
-  }
-  counts <- unlist(res[seq(1, length(res), by = 2)])
-  root$children <- res[seq(2, length(res), by = 2)]
-  keep <- length(TrimZeros(counts, trim = "b"))
-
-  if (keep == 0) {
-    root$sticks <- NULL
-    root$children <- list()
-  } else {
-    root$sticks <- root$sticks[1:keep]
-    root$children <- root$children[1:keep]
-  }
-
-  return(list(counts = sum(counts) + root$node$GetNumOfLocalData(),
-              root = root))
-}
-
-td <- Descend1(tssb$root)
-
+tt1 <- tssb$root
+res3 <- tssb$ConvertTssbToIgraph()
+plot(res3$g,
+     layout = layout.reingold.tilford(res3$g),
+     vertex.label = get.vertex.attribute(res3$g, name = "size"))
