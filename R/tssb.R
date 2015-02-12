@@ -23,7 +23,7 @@ TSSB <- R6Class(
     maxDepth = NA,
     root = list(),
     assignments = list(),
-    numOfData = NA
+    numOfData = NA,
 
     # Methods -----------------------------------------------------------------
     initialize = function(rootNode = emptyenv(),
@@ -55,7 +55,7 @@ TSSB <- R6Class(
       rootNode$tssb <- self
 
       # Draw data assignments and a tree
-      for (n in 1:self$numOfData)) {
+      for (n in 1:self$numOfData) {
         res <- self$FindNode(runif(1))
         self$assignments <- c(self$assignments, res$node)
         res$node$AddDatum(n)
@@ -64,6 +64,7 @@ TSSB <- R6Class(
     },
 
     FindNode = function(u) {
+      #' Top-down transverse the tree
       Descend <- function(root, u, path = c(), depth = 0) {
         if (depth >= self$maxDepth) {
           warning("Reached maximum depth")
@@ -71,7 +72,7 @@ TSSB <- R6Class(
         } else if (u < root$main) {
           return(list(node = root$node, path = path, root = root))
         } else {
-          # Rescale the uniform variate to the remaining interval.
+          #' Rescale the uniform variate to the remaining interval.
           u <- (u - root$main) / (1 - root$main)
           while (length(root$children) == 0
                  || u > (1 - prod(1 - root$sticks))
@@ -116,7 +117,7 @@ TSSB <- R6Class(
         if (length(root$children) < 1) {
           return(list(node = node, weight = weight))
         } else {
-          for (i in 1:length(root$children)) {
+          for (i in seq_along(root$children)) {
             child <- root$children[[i]]
             res <- Descend(child, mass*(1.0-root$main)*weights[i])
             node <- c(node, res$node)
@@ -209,16 +210,54 @@ TSSB <- R6Class(
 TssbMCMC <- R6Class(
   classname = "TssbMCMC",
   inherit = TSSB,
-
   public = list(
     ResampleAssignments = function() {
       epsilon <- 2.2204460492503131e-16
-      lengths <- []
-      reassign <- 0
-      better <- 0
+      lengths <- c()
 
       for (n in 1:self$numOfData) {
-        ancestors <- self$assignments[n]$GetAncestors()
+        ancestors <- self$assignments[[n]]$GetAncestors()
+        current <-  self$root
+        indices <- c()
+        for (anc in seq_along(ancestors)) {
+          index = which(
+            unlist(
+              Map(function(x) identical(x,anc), current$children)
+              )
+            )
+          current = current$children[index]
+          indices = c(indices, index)
+        }
+        maxU <- 1
+        minU <- 0
+        llhS = log(runif(1)) + self$assignments[[n]]$LogProb(self$data[n,])
+        while (T) {
+          newU <- (maxU-minU)*runif(1) + minU
+          res <- self$FindNode(newU)
+          newNode <- res$node
+          newPath <- res$path
+          newLlh <- newNode$LogProb(self$data[n,])
+          if (newLlh > llhS) {
+            if (!identical(newNode != self$assignments[[n]])) {
+              self$assignments[[n]]$RemoveDatum(n)
+              newNode$AddDatum(n)
+              self.assignments[[n]] = newNode
+              break
+            }
+          } else if (abs(maxU - minU) < epsilon) {
+            warning("Slice sampler shrank down. Keep current state.")
+            break
+          } else {
+            res <- ComparePath(indices, newPath)
+            if (res < 0) {
+              minU <- newU
+            } else if (res >0) {
+              maxU <- newU
+            } else {
+              stop("Slice sampler weirdness")
+            }
+          }
+        }
       }
     }
 
