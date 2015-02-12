@@ -43,7 +43,7 @@ Node <- R6Class(
 
     SetParent = function(parent = emptyenv()) {
       private$parent <- parent
-    }
+    },
 
     AddChild = function(child) {
       if (!missing(child)) {
@@ -55,20 +55,20 @@ Node <- R6Class(
 
     RemoveChild = function(child) {
       if (!missing(child)) {
-        child$SetParent()
         private$children <- Filter(
           Negate(
             function(x) identical(child, x)
             ),
           private$children)
+        child$SetParent()
       }
       invisible(self)
     },
 
     Kill = function() {
       if (!identical(private$parent, emptyenv())) {
-        private$parent$RemoveChild(self)
         sapply(private$children, private$parent$AddChild)
+        private$parent$RemoveChild(self)
       }
       private$children = NULL
       private$parent = NULL
@@ -91,7 +91,7 @@ Node <- R6Class(
     },
 
     AddDatum = function(id) {
-      if (!missing(id) && !id %in% self$dataIds) {
+      if (!missing(id) && !any(self$dataIds==id)) {
         self$dataIds <- c(self$dataIds, id)
       }
     },
