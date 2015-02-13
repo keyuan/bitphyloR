@@ -1,5 +1,5 @@
 ---
-title: "Development notes for bitphyloR"
+title: "Tree-structured stick breaking process"
 author: "Ke Yuan"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -20,7 +20,8 @@ n0
 ```
 
 ```{r}
-set.seed(9)
+randSeed <- 7
+set.seed(randSeed)
 tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
                  dpLambda = 1)
 tssb
@@ -35,9 +36,9 @@ barplot(res$weight)
 ```{r}
 res2 <- tssb$ConvertTssbToIgraph()
 g <- res2$g
-plot.igraph(g, layout = layout.reingold.tilford(g), 
+print(plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
-     edge.arrow.size = 0.1)
+     vertex.size = 30, edge.arrow.size = 0.5))
 ```
 
 ```{r}
@@ -46,20 +47,29 @@ res3 <- tssb$ConvertTssbToIgraph()
 g <- res3$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
-     edge.arrow.size = 0.1)
+     vertex.size = 30, edge.arrow.size = 0.5)
 
 ```
 
 
-# Inference objects 
+# Inference classes 
 ```{r}
 n0 <- Node$new()
-set.seed(9)
-tssbMCMC <- TssbMCMC$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
-                 dpLambda = 1)
+set.seed(randSeed)
+tssbMCMC <- TssbMCMC$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 0.2,
+                 dpLambda = 0.5)
 ```
 
 ```{r}
 res <- tssbMCMC$GetMixture()
 barplot(res$weight)
+sum(res$weight)
 ```
+
+```{r}
+tssbMCMC$ResampleSticks()
+res <- tssbMCMC$GetMixture()
+barplot(res$weight)
+sum(res$weight)
+```
+
