@@ -216,7 +216,7 @@ TssbMCMC <- R6Class(
       lengths <- c()
 
       for (n in 1:self$numOfData) {
-        ancestors <- self$assignments[[n]]$GetAncestors()
+        ancestors <- self$assignments[n]$GetAncestors()
         current <-  self$root
         indices <- c()
         for (anc in seq_along(ancestors)) {
@@ -230,18 +230,18 @@ TssbMCMC <- R6Class(
         }
         maxU <- 1
         minU <- 0
-        llhS = log(runif(1)) + self$assignments[[n]]$LogProb(self$data[n,])
+        llhS = log(runif(1)) + self$assignments[n]$LogProb(self$data[n,])
         while (T) {
-          newU <- (maxU-minU)*runif(1) + minU
+          newU <- (maxU - minU)*runif(1) + minU
           res <- self$FindNode(newU)
           newNode <- res$node
           newPath <- res$path
           newLlh <- newNode$LogProb(self$data[n,])
           if (newLlh > llhS) {
-            if (!identical(newNode != self$assignments[[n]])) {
-              self$assignments[[n]]$RemoveDatum(n)
+            if (!identical(newNode != self$assignments[n])) {
+              self$assignments[n]$RemoveDatum(n)
               newNode$AddDatum(n)
-              self.assignments[[n]] = newNode
+              self.assignments[n] = newNode
               break
             }
           } else if (abs(maxU - minU) < epsilon) {
@@ -259,6 +259,32 @@ TssbMCMC <- R6Class(
           }
         }
       }
+      invisible(self)
+    },
+
+    ResampleSticks = function() {
+      Descend <- function(root, depth=0) {
+        dataDown <- 0
+        indices <- seq_along(root$children)
+
+        for (i in sort(indices, decreasing = T)) {
+          res <- Descend(root$children[[i]], depth+1)
+          childData <- res$nodeData
+          root$children[[i]] <- res$root
+          dataDown <- dataDown + childData
+          postAlpha <- 1 + childData
+          postBeta <- self$dpGamma + dataDown
+          root$sticks[i] <- rbeta(1, postAlpha, postBeta)
+        }
+
+        dataHere <- root$node$GetNumOfLocalData()
+        postAlpha <- 1 + dataHere
+        postBeta <- (self$dpLambda^depth) * self$dpAlpha + dataDown
+        root$main = if (self$minDepth <= depth) rbeta(1, postAlpha, postBeta) else 0.0
+        return(list(nodeData = dataHere + dataDown, root = root))
+      }
+      self$root = Descend(self$root)$root
+      invisible(self)
     }
 
     )
