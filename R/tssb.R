@@ -92,10 +92,10 @@ TSSB <- R6Class(
                               )
           }
           edges <- SticksToEdges(root$sticks)
-          index <- sum(u > edges) + 1
           edges <- c(0, edges)
+          index <- sum(u > edges)
           u     <- (u - edges[index]) / (edges[index+1] - edges[index])
-          res <- Descend(root$children[[index]], u, depth+1)
+          res <- Descend(root$children[[index]], u, path, depth+1)
           node <- res$node
           path <- res$path
           path <- c(path,index)
@@ -114,17 +114,13 @@ TSSB <- R6Class(
         edges <- SticksToEdges(root$sticks)
         weights <- diff(c(0, edges))
 
-        if (length(root$children) < 1) {
-          return(list(node = node, weight = weight))
-        } else {
-          for (i in seq_along(root$children)) {
-            child <- root$children[[i]]
-            res <- Descend(child, mass*(1.0-root$main)*weights[i])
-            node <- c(node, res$node)
-            weight <- c(weight, res$weight)
-          }
-          return(list(node = node, weight = weight))
+        for (i in seq_along(root$children)) {
+          child <- root$children[[i]]
+          res <- Descend(child, mass*(1.0-root$main)*weights[i])
+          node <- c(node, res$node)
+          weight <- c(weight, res$weight)
         }
+        return(list(node = node, weight = weight))
       }
       return(Descend(self$root, 1.0))
     },
@@ -283,6 +279,7 @@ TssbMCMC <- R6Class(
         root$main = if (self$minDepth <= depth) rbeta(1, postAlpha, postBeta) else 0.0
         return(list(nodeData = dataHere + dataDown, root = root))
       }
+
       self$root = Descend(self$root)$root
       invisible(self)
     }
