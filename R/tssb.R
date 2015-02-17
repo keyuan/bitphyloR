@@ -98,7 +98,7 @@ TSSB <- R6Class(
           res <- Descend(root$children[[index]], u, path, depth+1)
           node <- res$node
           path <- res$path
-          path <- c(path,index)
+          path <- c(index, path)
           root$children[[index]] <- res$root
           return(list(node = node, path = path, root = root))
           }
