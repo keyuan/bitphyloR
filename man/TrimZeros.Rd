@@ -9,8 +9,8 @@ TrimZeros(x, trim = "fb")
 \arguments{
 \item{x}{A numerical vector}
 
-\item{trim}{A string with ‘f’ representing trim from front and ‘b’ to
-trim from back. Default is ‘fb’, trim zeros from both front and back of the
+\item{trim}{A string with "f" representing trim from front and "b" to
+trim from back. Default is "fb", trim zeros from both front and back of the
 array.}
 }
 \value{

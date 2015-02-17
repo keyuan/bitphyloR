@@ -9,8 +9,8 @@ SticksToEdges <- function(sticks){
 
 #' Trim leading or trailing zeros in a vector
 #' @param x A numerical vector
-#' @param trim A string with ‘f’ representing trim from front and ‘b’ to
-#' trim from back. Default is ‘fb’, trim zeros from both front and back of the
+#' @param trim A string with "f" representing trim from front and "b" to
+#' trim from back. Default is "fb", trim zeros from both front and back of the
 #' array.
 #' @return The result of trimming the input
 #' @export
