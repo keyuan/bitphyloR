@@ -27,7 +27,7 @@ res3 = c()
 res4 = c()
 res5 = c()
 res6 = c()
-for (i in 1:1000){
+for (i in 1:1){
   print(i)
   n0 <- Node$new()
   tssbMCMC <- TssbMCMC$new(n0,
@@ -38,15 +38,18 @@ for (i in 1:1000){
   ww <- tssbMCMC$GetMixture()$weight
   res1 <- c(res1, sum(ww))
   res2 <- c(res2, length(ww))
+  root1 <- tssbMCMC$root
 
   tssbMCMC$CullTree()
   ww <- tssbMCMC$GetMixture()$weight
   res3 <- c(res3, sum(ww))
   res4 <- c(res4, length(ww))
+  root2 <- tssbMCMC$root
 
   ww <- tssbMCMC$ResampleSticks()$GetMixture()$weight
   res5 <- c(res5, sum(ww))
   res6 <- c(res6, length(ww))
+  root3 <- tssbMCMC$root
 
 }
 
