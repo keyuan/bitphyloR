@@ -10,18 +10,22 @@ vignette: >
 ---
 
 
-# Testing TSSB class
+# The TSSB prior 
 
-Initiating a `Node` object 
+To illustrate the TSSB prior, we load the `bitphyloR` package and initiate a `Node` object. 
 ```{r}
 library(bitphyloR)
 n0 <- Node$new()
+```
+The `Node` object is the basic class representing components in the mixture. 
+```{r}
 n0
 ```
 
+
 ```{r}
-randSeed <- 7
-set.seed(randSeed)
+fixedSeed <- 10
+set.seed(fixedSeed)
 tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
                  dpLambda = 1)
 tssb
@@ -33,31 +37,30 @@ barplot(res$weight)
 ```
 
 
-```{r}
+```{r, fig.width=5, fig.height=5}
 res2 <- tssb$ConvertTssbToIgraph()
 g <- res2$g
 print(plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
-     vertex.size = 30, edge.arrow.size = 0.5))
+     vertex.size = 15, edge.arrow.size = 0.5))
 ```
 
-```{r}
+
+```{r, fig.width=5, fig.height=5}
 tssb$CullTree()
 res3 <- tssb$ConvertTssbToIgraph()
 g <- res3$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
-     vertex.size = 30, edge.arrow.size = 0.5)
+     vertex.size = 15, edge.arrow.size = 0.5)
 
 ```
 
 
 # Inference classes 
 ```{r}
-n0 <- Node$new()
-set.seed(randSeed)
-tssbMCMC <- TssbMCMC$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 0.2,
-                 dpLambda = 0.5)
+set.seed(fixedSeed)
+tssbMCMC <- TssbMCMC$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1, dpLambda = 1)
 ```
 
 ```{r}
