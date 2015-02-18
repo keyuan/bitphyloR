@@ -55,8 +55,9 @@ TSSB <- R6Class(
       rootNode$tssb <- self
 
       # Draw data assignments and a tree
+      uSamples <- runif(self$numOfData)
       for (n in 1:self$numOfData) {
-        res <- self$FindNode(runif(1))
+        res <- self$FindNode(uSamples[n])
         self$assignments <- c(self$assignments, res$node)
         res$node$AddDatum(n)
         self$root <- res$root
@@ -85,20 +86,18 @@ TSSB <- R6Class(
                                   main = if (self$minDepth <= (depth+1)) {
                                     rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
                                     } else {0},
-                                  sticks = c(),
-                                  children = list()
+                                  sticks = NULL,
+                                  children = NULL
                                   )
                                 )
                               )
           }
-          edges <- SticksToEdges(root$sticks)
-          edges <- c(0, edges)
+          edges <- c(0, SticksToEdges(root$sticks))
           index <- sum(u > edges)
           u     <- (u - edges[index]) / (edges[index+1] - edges[index])
           res <- Descend(root$children[[index]], u, path, depth+1)
           node <- res$node
-          path <- res$path
-          path <- c(index, path)
+          path <- c(index, res$path)
           root$children[[index]] <- res$root
           return(list(node = node, path = path, root = root))
           }
@@ -267,10 +266,10 @@ TssbMCMC <- R6Class(
           res <- Descend(root$children[[i]], depth+1)
           childData <- res$nodeData
           root$children[[i]] <- res$root
-          dataDown <- dataDown + childData
           postAlpha <- 1 + childData
           postBeta <- self$dpGamma + dataDown
           root$sticks[i] <- rbeta(1, postAlpha, postBeta)
+          dataDown <- dataDown + childData
         }
 
         dataHere <- root$node$GetNumOfLocalData()
