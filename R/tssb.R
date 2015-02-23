@@ -288,12 +288,11 @@ TssbMCMC <- R6Class(
         if (length(root$children)==0) {
           return(root)
         }
-
         newOrder <- c()
         represented <- Filter(function(x) x$node$HasData(), root$children)
         allWeights <- diff(c(0,SticksToEdges(root$sticks)))
 
-        while (represented) {
+        while (is.null(represented)) {
           u <- runif(1)
           while (TRUE) {
             subIndices <- Filter(function(x) ! x %ini% newOrder, seq_along(root$sticks))
@@ -312,13 +311,30 @@ TssbMCMC <- R6Class(
               allWeights <- diff(c(0, StickToEdges(root$sticks)))
             } else {
               index <- subIndices[index]
+              break
             }
-
           }
-
+          newOrder <- c(newOrder, index)
+          represented <- represented[represented != index]
         }
 
+        newChildren <- c()
+        for (k in newOrder) {
+          child = root$children[k]
+          newChildren <- c(newChildren, child)
+          root$children[[k]] <- descend(child, depth + 1)
+        }
+
+        sapply(Filter(function(x) ! x %in% newOrder, seq_along(root$sticks)),
+               function(k) {root$children[[k]]$node$Kill()
+                            root$children[[k]] <- NULL})
+
+        root$children = newChildren
+        root$sticks   = rep(0, length(newChildren))
+
+        return(root)
       }
+      self$root <- Descend(self$root)
     }
 
     )
