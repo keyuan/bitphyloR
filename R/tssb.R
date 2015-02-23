@@ -281,6 +281,44 @@ TssbMCMC <- R6Class(
 
       self$root = Descend(self$root)$root
       invisible(self)
+    },
+
+    ResampleStickOrders <- function() {
+      Descend <- function(root, depth = 0) {
+        if (length(root$children)==0) {
+          return(root)
+        }
+
+        newOrder <- c()
+        represented <- Filter(function(x) x$node$HasData(), root$children)
+        allWeights <- diff(c(0,SticksToEdges(root$sticks)))
+
+        while (represented) {
+          u <- runif(1)
+          while (TRUE) {
+            subIndices <- Filter(function(x) ! x %ini% newOrder, seq_along(root$sticks))
+            subWeights <- c(allWeights[subIndices], 1-sum(allWeights))
+            subWeights <- subWeights/sum(subWeights)
+            index <- sum(u > cumsum(subWeights))
+            if (index == length(subIndices)) {
+              root$sticks <- c(root$sticks, rbeta(1, 1, self$Gamma))
+              root$children <- c(root$children,
+                                 list(
+                                   list(
+                                     node = root$node$Spawn(),
+                                     main = if (self$minDepht <= depth +1 ) {rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)} else {0},
+                                     sticks = c(),
+                                     children = c())))
+              allWeights <- diff(c(0, StickToEdges(root$sticks)))
+            } else {
+              index <- subIndices[index]
+            }
+
+          }
+
+        }
+
+      }
     }
 
     )
