@@ -8,6 +8,7 @@ before_install:
 install:
   - ./travis-tool.sh install_github igraph/rigraph
   - ./travis-tool.sh install_github wch/R6
+  - ./travis-tool.sh r_binary_install testthat
   - ./travis-tool.sh install_deps
 
 script: ./travis-tool.sh run_tests
