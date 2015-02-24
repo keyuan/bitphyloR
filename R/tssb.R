@@ -92,7 +92,7 @@ TSSB <- R6Class(
                                     rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
                                     } else {0},
                                   sticks = NULL,
-                                  children = NULL
+                                  children = list()
                                   )
                                 )
                               )
@@ -298,25 +298,27 @@ TssbMCMC <- R6Class(
                               seq_along(root$children))
         allWeights <- diff(c(0,SticksToEdges(root$sticks)))
 
-        while (is.null(represented)) {
+        while (length(represented)!=0) {
           u <- runif(1)
           while (TRUE) {
-            subIndices <- Filter(function(x) ! x %ini% newOrder, seq_along(root$sticks))
+            subIndices <- Filter(function(x) ! x %in% newOrder, seq_along(root$sticks))
             subWeights <- c(allWeights[subIndices], 1-sum(allWeights))
             subWeights <- subWeights/sum(subWeights)
             index <- sum(u > cumsum(subWeights))
             if (index == length(subIndices)) {
-              root$sticks <- c(root$sticks, rbeta(1, 1, self$Gamma))
+              root$sticks <- c(root$sticks, rbeta(1, 1, self$dpGamma))
               root$children <- c(root$children,
                                  list(
                                    list(
                                      node = root$node$Spawn(),
-                                     main = if (self$minDepht <= depth +1 ) {rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)} else {0},
+                                     main = if (self$minDepth <= depth +1 ) {
+                                       rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
+                                     } else {0},
                                      sticks = c(),
-                                     children = c())))
-              allWeights <- diff(c(0, StickToEdges(root$sticks)))
+                                     children = list())))
+              allWeights <- diff(c(0, SticksToEdges(root$sticks)))
             } else {
-              index <- subIndices[index]
+              index <- subIndices[index+1]
               break
             }
           }
@@ -328,12 +330,12 @@ TssbMCMC <- R6Class(
         for (k in newOrder) {
           child = root$children[k]
           newChildren <- c(newChildren, child)
-          root$children[[k]] <- descend(child, depth + 1)
+          root$children[[k]] <- Descend(root$children[[k]], depth + 1)
         }
 
-        sapply(Filter(function(x) ! x %in% newOrder, seq_along(root$sticks)),
+        lapply(Filter(function(x) ! x %in% newOrder, seq_along(root$sticks)),
                function(k) {root$children[[k]]$node$Kill()
-                            root$children[[k]] <- NULL})
+                            root$children[[k]] <- list()})
 
         root$children = newChildren
         root$sticks   = rep(0, length(newChildren))
@@ -341,6 +343,7 @@ TssbMCMC <- R6Class(
         return(root)
       }
       self$root <- Descend(self$root)
+      invisible(self)
     }
 
     )
