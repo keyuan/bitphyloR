@@ -24,7 +24,7 @@ n0
 
 
 ```{r}
-fixedSeed <- 10
+fixedSeed <- 9
 set.seed(fixedSeed)
 tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
                  dpLambda = 1)
@@ -40,9 +40,9 @@ barplot(res$weight)
 ```{r, fig.width=5, fig.height=5}
 res2 <- tssb$ConvertTssbToIgraph()
 g <- res2$g
-print(plot.igraph(g, layout = layout.reingold.tilford(g), 
+plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
-     vertex.size = 15, edge.arrow.size = 0.5))
+     vertex.size = 15, edge.arrow.size = 0.5)
 ```
 
 
@@ -75,4 +75,22 @@ res <- tssbMCMC$GetMixture()
 barplot(res$weight)
 sum(res$weight)
 ```
+
+```{r, fig.width=5, fig.height=5}
+tssbMCMC$CullTree()
+g <- tssbMCMC$ConvertTssbToIgraph()$g
+plot.igraph(g, layout = layout.reingold.tilford(g), 
+     vertex.label = get.vertex.attribute(g, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+```
+
+
+```{r, fig.width=5, fig.height=5}
+g <- tssbMCMC$ResampleStickOrders()$ConvertTssbToIgraph()$g
+plot.igraph(g, layout = layout.reingold.tilford(g), 
+     vertex.label = get.vertex.attribute(g, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+```
+
+
 

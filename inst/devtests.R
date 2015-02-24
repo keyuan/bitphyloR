@@ -22,7 +22,7 @@ library(microbenchmark)
 #      vertex.size = 15, edge.arrow.size = 0.5)
 
 set.seed(10)
-n = 1000
+n = 1
 res1 = vector("numeric", n)
 res2 = res1
 res3 = res1
@@ -63,7 +63,6 @@ for (i in seq_along(res1)){
   res6[i] <- length(ww)
 
 }
-
 
 
 
