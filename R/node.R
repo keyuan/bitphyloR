@@ -5,12 +5,13 @@
 #' @importFrom R6 R6Class
 #' @export
 #' @format An \code{\link{R6Class}} generator object
-#' @keywords data
+#' @keywords Node class
 #' @field dataIds: data IDs
 #' @field tssb: A TSSB object
 #' @field children: descentant node objects
 #' @field parent: parent node object
 #' @method initialize
+#' @method GetChildren
 Node <- R6Class(
   classname = "Node",
 

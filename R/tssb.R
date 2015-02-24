@@ -11,6 +11,11 @@
 #' @format An \code{\link{R6Class}} generator object
 #' @keywords data
 #' @field data
+#' @field dpAlpha
+#' @field dpGamma
+#' @field dpLambda
+#' @field minDepth
+#' @field maxDepth
 TSSB <- R6Class(
   classname = "TSSB",
   public = list(
@@ -283,13 +288,14 @@ TssbMCMC <- R6Class(
       invisible(self)
     },
 
-    ResampleStickOrders <- function() {
+    ResampleStickOrders = function() {
       Descend <- function(root, depth = 0) {
         if (length(root$children)==0) {
           return(root)
         }
         newOrder <- c()
-        represented <- Filter(function(x) x$node$HasData(), root$children)
+        represented <- Filter(function(i) root$children[[i]]$node$HasData(),
+                              seq_along(root$children))
         allWeights <- diff(c(0,SticksToEdges(root$sticks)))
 
         while (is.null(represented)) {
