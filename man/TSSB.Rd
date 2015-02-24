@@ -17,6 +17,16 @@ process
 
 \describe{
 \item{\code{data}}{}
+
+\item{\code{dpAlpha}}{}
+
+\item{\code{dpGamma}}{}
+
+\item{\code{dpLambda}}{}
+
+\item{\code{minDepth}}{}
+
+\item{\code{maxDepth}}{}
 }}
 \keyword{data}
 

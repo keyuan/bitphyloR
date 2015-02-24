@@ -22,5 +22,6 @@ R6 class for Node. Node is the basic object of each cluster in TSSB
 
 \item{\code{parent:}}{parent node object}
 }}
-\keyword{data}
+\keyword{Node}
+\keyword{class}
 
