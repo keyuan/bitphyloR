@@ -3,7 +3,7 @@ Type: Package
 Title: bitphylogeny in R
 Version: 0.0.0.9000
 Authors@R: person("Ke", "Yuan", email = "ke.yuan@gmail.com",
-  role = c("aut", "cre"))
+    role = c("aut", "cre"))
 Description: More about what it does (maybe more than one line)
 License: GPL-3
 Depends:
@@ -15,3 +15,11 @@ Suggests:
     knitr
 LazyData: true
 VignetteBuilder: knitr
+Collate:
+    'node.R'
+    'node_normal.R'
+    'tssb.R'
+    'tssb_inference_batch_vb.R'
+    'tssb_inference_mcmc.R'
+    'tssb_inference_stochastic_vb.R'
+    'util.R'
