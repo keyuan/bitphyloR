@@ -56,7 +56,6 @@ plot.igraph(g, layout = layout.reingold.tilford(g),
 
 ```
 
-
 # Inference classes 
 ```{r}
 set.seed(fixedSeed)
@@ -84,7 +83,6 @@ plot.igraph(g, layout = layout.reingold.tilford(g),
      vertex.size = 15, edge.arrow.size = 0.5)
 ```
 
-
 ```{r, fig.width=5, fig.height=5}
 g <- tssbMCMC$ResampleStickOrders()$ConvertTssbToIgraph()$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
@@ -92,5 +90,10 @@ plot.igraph(g, layout = layout.reingold.tilford(g),
      vertex.size = 15, edge.arrow.size = 0.5)
 ```
 
-
+```{r, fig.width=5, fig.height=5}
+g <- tssbMCMC$ResampleStickOrders()$ConvertTssbToIgraph()$g
+plot.igraph(g, layout = layout.reingold.tilford(g), 
+     vertex.label = get.vertex.attribute(g, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+```
 
