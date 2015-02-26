@@ -12,7 +12,7 @@
 #' @field parent: parent node object
 #' @method initialize
 #' @method GetChildren
-Node <- R6Class(
+Node <- R6::R6Class(
   classname = "Node",
 
   public = list(
@@ -143,5 +143,7 @@ Node <- R6Class(
     parent = emptyenv()
     )
   )
+
+
 
 
