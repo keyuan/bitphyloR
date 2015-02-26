@@ -343,6 +343,7 @@ TssbMCMC <- R6Class(
         return(root)
       }
       self$root <- Descend(self$root)
+      self$ResampleSticks()
       invisible(self)
     }
 
