@@ -18,19 +18,17 @@ Node <- R6::R6Class(
   public = list(
     # Fields ------------------------------------------------------------------
     dataIds = c(),
-    tssb = emptyenv(),
+    tssb = NULL,
 
     # Methods -----------------------------------------------------------------
-    initialize = function(parent = emptyenv(), tssb = emptyenv()) {
-      if (is.environment(parent) &&
-            !identical(parent, emptyenv()) &&
-            class(parent)[1] == "Node") {
+    initialize = function(parent = NULL, tssb = NULL) {
+      if (!is.null(parent)) {
         private$parent <- parent
         parent$AddChild(self)
       } else {
         private$parent <- parent
       }
-      if (is.environment(tssb) ) self$tssb <- tssb
+      if (!is.null(tssb) ) self$tssb <- tssb
       },
 
 
@@ -42,7 +40,7 @@ Node <- R6::R6Class(
       private$parent
     },
 
-    SetParent = function(parent = emptyenv()) {
+    SetParent = function(parent = NULL) {
       private$parent <- parent
     },
 
@@ -139,8 +137,8 @@ Node <- R6::R6Class(
 
   private = list(
     # Fields
-    children = list(),
-    parent = emptyenv()
+    children = NULL,
+    parent = NULL
     )
   )
 
