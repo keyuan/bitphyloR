@@ -156,6 +156,11 @@ Version: 0.4.2
 Hash: fa8af6d040041439b249351e9d16ae9a
 Requires: colorspace
 
+Package: mvtnorm
+Source: CRAN
+Version: 1.0-2
+Hash: 77cba5f561791810a6946f9ebff85a0e
+
 Package: packrat
 Source: github
 Version: 0.4.0.12
