@@ -26,8 +26,8 @@ TSSB <- R6::R6Class(
     dpLambda = NA,
     minDepth = NA,
     maxDepth = NA,
-    root = list(),
-    assignments = list(),
+    root = NULL,
+    assignments = NULL,
     numOfData = NA,
 
     # Methods -----------------------------------------------------------------
@@ -92,7 +92,7 @@ TSSB <- R6::R6Class(
                                     rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
                                     } else {0},
                                   sticks = NULL,
-                                  children = list()
+                                  children = NULL
                                   )
                                 )
                               )
@@ -192,6 +192,27 @@ TSSB <- R6::R6Class(
       res <- Descend(self$root)
       self$root <- res$root
       invisible(self)
+    },
+
+    GetLogMarginalDataLikelihood = function() {
+      res <- self$GetMixture()
+      weights <- res$weight
+      nodes <- res$node
+      return(
+        Reduce(
+          sum,
+          Map(function(i) {
+            if (nodes[[i]]$GetNumOfLocalData) {
+              nodes[[i]]$GetNumOfLocalData()*weights[i] + nodes[[i]]$GetLogDataLikelihood()
+              } else {
+              0
+              }
+            },
+            seq_along(weights)
+            ),
+          0
+        )
+      )
     }
 
 
