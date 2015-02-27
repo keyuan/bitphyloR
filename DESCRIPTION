@@ -8,14 +8,17 @@ Description: More about what it does (maybe more than one line)
 License: GPL-3
 Depends:
     R (>= 3.0),
-    R6,
     igraph
+Imports:
+    R6
 Suggests:
     testthat,
     knitr
 LazyData: true
 VignetteBuilder: knitr
 Collate:
+    'distn.R'
+    'mvnorm.R'
     'node.R'
     'node_normal.R'
     'tssb.R'
