@@ -41,7 +41,7 @@ TSSB <- R6::R6Class(
                           ) {
       if (!is.environment(rootNode) ||
             identical(rootNode, emptyenv()) ||
-            class(rootNode)[1] != "Node") {
+            !"Node" %in% class(rootNode)) {
         stop("Root node must be specified")
       }
 
@@ -132,9 +132,9 @@ TSSB <- R6::R6Class(
     ConvertTssbToIgraph = function() {
       edges <- SticksToEdges(self$root$sticks)
       weights <- diff(c(0, edges))
-      g <- graph.empty(directed = TRUE)
-      g <- g + vertex(name = "X",
-                      size = self$root$node$GetNumOfLocalData())
+      g <- igraph::graph.empty(directed = TRUE)
+      g <- g + igraph::vertex(name = "X",
+                              size = self$root$node$GetNumOfLocalData())
 
       Descend <- function(root, name, mass, g) {
         if (length(root$sticks) < 1){
@@ -148,10 +148,10 @@ TSSB <- R6::R6Class(
             child <- root$children[[i]]
             childName <- paste(name, i, sep = "-")
             childMass <- mass * weights[i] * child$main
-            g <- g + vertex(name = childName,
-                            size = child$node$GetNumOfLocalData())
-            g <- g + edge(name, childName,
-                          Value = child$node$GetNumOfLocalData())
+            g <- g + igraph::vertex(name = childName,
+                                    size = child$node$GetNumOfLocalData())
+            g <- g + igraph::edge(name, childName,
+                                  Value = child$node$GetNumOfLocalData())
             tmp <- Descend(child,
                            childName,
                            mass*weights[i]*(1.0 - child$main),
