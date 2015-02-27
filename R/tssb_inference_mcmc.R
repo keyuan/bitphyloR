@@ -14,6 +14,10 @@ TssbMCMC <- R6::R6Class(
   classname = "TssbMCMC",
   inherit = TSSB,
   public = list(
+    initialize = function(...) {
+      super$initialize(...)
+    },
+
     ResampleAssignments = function() {
       epsilon <- 2.2204460492503131e-16
       lengths <- c()
