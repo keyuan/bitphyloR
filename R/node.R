@@ -65,7 +65,8 @@ Node <- R6::R6Class(
     },
 
     Kill = function() {
-      if (!identical(private$parent, emptyenv())) {
+      if (!is.null(private$parent) &&
+            !identical(private$parent, emptyenv())) {
         sapply(private$children, private$parent$AddChild)
         private$parent$RemoveChild(self)
       }
