@@ -19,7 +19,6 @@ TssbMCMC <- R6::R6Class(
     },
 
     ResampleAssignments = function() {
-      epsilon <- 2.2204460492503131e-16
       lengths <- c()
 
       for (n in 1:self$numOfData) {
@@ -51,7 +50,7 @@ TssbMCMC <- R6::R6Class(
               self.assignments[n] = newNode
               break
             }
-          } else if (abs(maxU - minU) < epsilon) {
+          } else if (abs(maxU - minU) < .Machine$double.eps) {
             warning("Slice sampler shrank down. Keep current state.")
             break
           } else {
