@@ -1,24 +1,6 @@
 #'@include node.R
 NULL
 
-ConvertFunctionNameToVariableName <- function(f) {
-  res <- unlist(strsplit(gsub("(.)([[:upper:]])", "\\1 \\2", f), " "))
-  res[2] <- paste(tolower(substring(res[2], 1, 1)), substring(res[2], 2), sep = "" )
-  return(paste(res[-1], collapse = "" ))
-}
-
-GetHyperParamsTemplete <- function(f) {
-  v <- ConvertFunctionNameToVariableName(f)
-  function() {
-    print(v)
-    if (is.null(self$GetParent())) {
-      return(eval(paste("private$", v, sep ="")))
-    } else {
-      return(do.call(paste("self$GetParent()$", f, sep = ""  ), list()))
-    }
-  }
-}
-
 #' R6 class for Normal node.
 #'
 #' @docType class
@@ -49,6 +31,7 @@ Normal <- R6::R6Class(
         private$priorDriftDof <-priorDriftDof
         private$priorSigmaScale <- priorSigmaScale
         private$priorSigmaDof <- priorSigmaDof
+        private$initMean <- initMean
         self$sigma <- riwish(v = priorSigmaDof, S = priorSigmaScale)
         self$params <- rmvnorm(n = 1,
                                mean = initMean,
@@ -57,13 +40,18 @@ Normal <- R6::R6Class(
         self$sigma <- riwish(v = priorSigmaDof, S = priorSigmaScale)
         self$params <- rmvnorm(n = 1,
                                mean = parent$params,
-                               sigma = self$GetDrift())
+                               sigma = parent$sigma)
       }
     },
 
-    GetDrift = GetHyperParamsTemplete("GetDrift"),
+    GetDrift = function() {
+      if (is.null(private$parent)) {
+        private$drift
+      } else {
+        private$parent$GetDrift()
+      }
+    },
 
-    GetDrift2 = function() {private$drift},
 
     GetLogProb = function(x) {
       sum(dmvnorm(x, self$params, self$sigma, log = TRUE))
@@ -75,8 +63,20 @@ Normal <- R6::R6Class(
 
     ResampleParams = function() {
       data <- self$GetData()
-      drift <- GetDrift
+      drift <- self$GetDrift()
+      numOfData <- nrow(data)
+      numOfChildren <- length(self$GetChildren())
 
+      if (is.null(private$parent)) {
+        parentParams <- self$initMean
+      } else {
+        parentParams <- private$parent$params
+      }
+
+
+    },
+
+    ResampleHyperParams = function() {
 
     }
   ),
@@ -85,6 +85,7 @@ Normal <- R6::R6Class(
     priorDriftScale = NA,
     priorDriftDof = NA,
     priorSigmaScale = NA,
-    priorSigmaDof = NA
+    priorSigmaDof = NA,
+    initMean = NA
   )
 )
