@@ -3,13 +3,13 @@
 \docType{class}
 \name{Node}
 \alias{Node}
-\title{R6 class for Node. Node is the basic object of each cluster in TSSB}
+\title{Node is a R6 object of each cluster in TSSB}
 \format{An \code{\link{R6Class}} generator object}
 \usage{
 Node
 }
 \description{
-R6 class for Node. Node is the basic object of each cluster in TSSB
+Node is a R6 object of each cluster in TSSB
 }
 \section{Fields}{
 

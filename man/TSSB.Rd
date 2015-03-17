@@ -3,14 +3,14 @@
 \docType{class}
 \name{TSSB}
 \alias{TSSB}
-\title{R6 class for TSSB. TSSB is the basic object of tree structured stick-breaking
+\title{TSSB is a R6 object of tree-structured stick breaking
 process}
 \format{An \code{\link{R6Class}} generator object}
 \usage{
 TSSB
 }
 \description{
-R6 class for TSSB. TSSB is the basic object of tree structured stick-breaking
+TSSB is a R6 object of tree-structured stick breaking
 process
 }
 \section{Fields}{
