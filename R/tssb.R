@@ -1,7 +1,7 @@
 
 # TSSB  -------------------------------------------------------------------
 
-#' R6 class for TSSB. TSSB is the basic object of tree structured stick-breaking
+#'TSSB is a R6 object of tree-structured stick breaking
 #' process
 #'
 #'
@@ -19,8 +19,8 @@
 TSSB <- R6::R6Class(
   classname = "TSSB",
   public = list(
-    # Felids ------------------------------------------------------------------
     data = NULL,
+    # Felids ------------------------------------------------------------------
     dpAlpha = NA,
     dpGamma = NA,
     dpLambda = NA,

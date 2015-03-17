@@ -1,4 +1,4 @@
-#' R6 class for Node. Node is the basic object of each cluster in TSSB
+#' Node is a R6 object of each cluster in TSSB
 #'
 #'
 #' @docType class

@@ -40,7 +40,7 @@ Normal <- R6::R6Class(
         self$sigma <- riwish(v = priorSigmaDof, S = priorSigmaScale)
         self$params <- rmvnorm(n = 1,
                                mean = parent$params,
-                               sigma = parent$sigma)
+                               sigma = parent$drift)
       }
     },
 
@@ -51,7 +51,6 @@ Normal <- R6::R6Class(
         private$parent$GetDrift()
       }
     },
-
 
     GetLogProb = function(x) {
       sum(dmvnorm(x, self$params, self$sigma, log = TRUE))
@@ -72,7 +71,6 @@ Normal <- R6::R6Class(
       } else {
         parentParams <- private$parent$params
       }
-
 
     },
 
