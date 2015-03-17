@@ -2,15 +2,23 @@
 title: "Tree-structured stick breaking process"
 author: "Ke Yuan"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  html_document:
+    theme: null
+    css: wch_style.css
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
+```{r echo = FALSE}
+# wch's setting 
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
 
-# The TSSB prior 
+## The TSSB prior 
 
 To illustrate the TSSB prior, we load the `bitphyloR` package and initiate a `Node` object. 
 ```{r}
@@ -22,7 +30,7 @@ The `Node` object is the basic class representing components in the mixture.
 n0
 ```
 
-
+Now, let's initiate a `TSSB` object. In this case, 
 ```{r}
 fixedSeed <- 9
 set.seed(fixedSeed)
@@ -37,7 +45,7 @@ barplot(res$weight)
 ```
 
 
-```{r, fig.width=5, fig.height=5}
+```{r}
 res2 <- tssb$ConvertTssbToIgraph()
 g <- res2$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
@@ -46,17 +54,16 @@ plot.igraph(g, layout = layout.reingold.tilford(g),
 ```
 
 
-```{r, fig.width=5, fig.height=5}
+```{r}
 tssb$CullTree()
 res3 <- tssb$ConvertTssbToIgraph()
 g <- res3$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
      vertex.size = 15, edge.arrow.size = 0.5)
-
 ```
 
-# Inference classes 
+## Inference classes 
 ```{r}
 set.seed(fixedSeed)
 tssbMCMC <- TssbMCMC$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1, dpLambda = 1)
@@ -75,7 +82,7 @@ barplot(res$weight)
 sum(res$weight)
 ```
 
-```{r, fig.width=5, fig.height=5}
+```{r}
 tssbMCMC$CullTree()
 g <- tssbMCMC$ConvertTssbToIgraph()$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
@@ -83,14 +90,14 @@ plot.igraph(g, layout = layout.reingold.tilford(g),
      vertex.size = 15, edge.arrow.size = 0.5)
 ```
 
-```{r, fig.width=5, fig.height=5}
+```{r}
 g <- tssbMCMC$ResampleStickOrders()$ConvertTssbToIgraph()$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
      vertex.size = 15, edge.arrow.size = 0.5)
 ```
 
-```{r, fig.width=5, fig.height=5}
+```{r}
 g <- tssbMCMC$ResampleStickOrders()$ConvertTssbToIgraph()$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
