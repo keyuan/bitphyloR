@@ -75,7 +75,7 @@ Node <- R6::R6Class(
     },
 
     Spawn = function() {
-      return(Node$new(parent = self, tssb = self$tssb))
+      return(get(class(self)[1])$new(parent = self, tssb = self$tssb))
     },
 
     HasData = function() {
