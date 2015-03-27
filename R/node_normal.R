@@ -40,7 +40,7 @@ Normal <- R6::R6Class(
         self$sigma <- riwish(v = priorSigmaDof, S = priorSigmaScale)
         self$params <- rmvnorm(n = 1,
                                mean = parent$params,
-                               sigma = parent$drift)
+                               sigma = self$GetDrift())
       }
     },
 
@@ -71,6 +71,15 @@ Normal <- R6::R6Class(
       } else {
         parentParams <- private$parent$params
       }
+
+      invDrift <- chol2inv(chol(drift))
+
+#       childParams = []
+#       for child in self$GetChildren():
+#         child_params.append(child.params)
+#
+#       child_suff = sum(child_params, 0)
+#       prec1 = invDrift * (num_children + 1)
 
     },
 
