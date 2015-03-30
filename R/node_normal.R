@@ -37,10 +37,27 @@ Normal <- R6::R6Class(
                                mean = initMean,
                                sigma = private$drift)
       } else {
-        self$sigma <- riwish(v = priorSigmaDof, S = priorSigmaScale)
+        self$sigma <- riwish(v = self$GetPriorSigmaDof(),
+                             S = self$GetPriorSigmaScale())
         self$params <- rmvnorm(n = 1,
                                mean = parent$params,
                                sigma = self$GetDrift())
+      }
+    },
+
+    GetPriorDriftDof = function() {
+      if (is.null(private$parent)) {
+        private$priorDriftDof
+      } else {
+        private$parent$GetPriorDriftDof()
+      }
+    },
+
+    GetPriorDriftScale = function() {
+      if (is.null(private$parent)) {
+        private$priorDriftScale
+      } else {
+        private$parent$GetPriorDriftScale()
       }
     },
 
@@ -49,6 +66,22 @@ Normal <- R6::R6Class(
         private$drift
       } else {
         private$parent$GetDrift()
+      }
+    },
+
+    GetPriorSigmaDof = function() {
+      if (is.null(private$parent)) {
+        private$priorSigmaDof
+      } else {
+        private$parent$GetPriorSigmaDof()
+      }
+    },
+
+    GetPriorSigmaScale = function() {
+      if (is.null(private$parent)) {
+        private$priorSigmaScale
+      } else {
+        private$parent$GetPriorSigmaScale()
       }
     },
 
@@ -80,7 +113,6 @@ Normal <- R6::R6Class(
 #
 #       child_suff = sum(child_params, 0)
 #       prec1 = invDrift * (num_children + 1)
-
     },
 
     ResampleHyperParams = function() {
