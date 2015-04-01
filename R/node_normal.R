@@ -97,7 +97,6 @@ Normal <- R6::R6Class(
       data <- self$GetData()
       drift <- self$GetDrift()
       numOfData <- nrow(data)
-      numOfChildren <- length(self$GetChildren())
 
       if (is.null(private$parent)) {
         parentParams <- self$initMean
@@ -105,14 +104,23 @@ Normal <- R6::R6Class(
         parentParams <- private$parent$params
       }
 
-      invDrift <- chol2inv(chol(drift))
+      #invDrift <- chol2inv(chol(drift))
 
-#       childParams = []
-#       for child in self$GetChildren():
-#         child_params.append(child.params)
-#
-#       child_suff = sum(child_params, 0)
-#       prec1 = invDrift * (num_children + 1)
+      childParams <- Reduce(
+        rbind
+        Map(function(x) {x$params}, root$GetChildren()),
+        c()
+        )
+
+      numOfChildren <- nrow(childParams)
+      childParamsMean <- colMeans(childParams)
+
+
+      # Construct prior for node mean
+      priorParams <- (parentParams + numOfChildren*childParamsMean) / (numOfChildren + 1)
+      priorParamsCov <- drift / (numOfChildren + 1)
+
+
     },
 
     ResampleHyperParams = function() {
