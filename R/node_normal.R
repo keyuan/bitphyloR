@@ -107,7 +107,7 @@ Normal <- R6::R6Class(
       #invDrift <- chol2inv(chol(drift))
 
       childParams <- Reduce(
-        rbind
+        rbind,
         Map(function(x) {x$params}, root$GetChildren()),
         c()
         )
