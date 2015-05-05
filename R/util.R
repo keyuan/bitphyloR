@@ -35,16 +35,3 @@ ConvertFunctionNameToVariableName <- function(f) {
   res[2] <- paste(tolower(substring(res[2], 1, 1)), substring(res[2], 2), sep = "" )
   return(paste(res[-1], collapse = "" ))
 }
-
-# Doesn't work
-GetHyperParamsTemplete <- function(f) {
-  v <- ConvertFunctionNameToVariableName(f)
-  function() {
-    print(v)
-    if (is.null(self$GetParent())) {
-      return(eval(paste("private$", v, sep ="")))
-    } else {
-      return(do.call(paste("self$GetParent()$", f, sep = ""  ), list()))
-    }
-  }
-}
