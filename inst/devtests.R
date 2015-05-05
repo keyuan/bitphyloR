@@ -31,7 +31,7 @@ res5 = res1
 res6 = res1
 for (i in seq_along(res1)){
   cat(i)
-  n0 <- Node$new()
+  n0 <- Normal$new()
   tssbMCMC <- TssbMCMC$new(n0,
                            data = matrix(rnorm(50),50,1),
                            dpAlpha = 1,
@@ -64,7 +64,17 @@ for (i in seq_along(res1)){
 
 }
 
+tssbMCMC$CullTree()
 
+Descend <- function(root) {
+  Map(Descend, root$children)
 
+  root$node$ResampleParams()
+  return(root=root)
+}
+
+root <- tssbMCMC$root
+
+Descend(root)
 
 
