@@ -36,7 +36,7 @@ TssbMCMC <- R6::R6Class(
         }
         maxU <- 1
         minU <- 0
-        llhS = log(runif(1)) + self$assignments[n]$LogProb(self$data[n,])
+        llhS = log(runif(1)) + self$assignments[n]$GetNodeLogProb(self$data[n,])
         while (T) {
           newU <- (maxU - minU)*runif(1) + minU
           res <- self$FindNode(newU)
@@ -151,6 +151,14 @@ TssbMCMC <- R6::R6Class(
       self$root <- Descend(self$root)
       self$ResampleSticks()
       invisible(self)
+    },
+
+    ResampleNodeParameters = function() {
+      Descend <- function(root) {
+        Map(Descend, root$children)
+        root$node$ResampleParams()
+      }
+      Descend(self$root)
     }
 
   )
