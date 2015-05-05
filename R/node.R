@@ -120,7 +120,12 @@ Node <- R6::R6Class(
     },
 
     GetData = function() {
-      self$tssb$data[self$dataIds,]
+      if (dim(self$tssb$data)[2] > 1) {
+        return(self$tssb$data[self$dataIds,])
+      } else {
+        return(as.matrix(self$tssb$data[self$dataIds,]))
+      }
+
     },
 
     GetAncestors = function() {
@@ -131,7 +136,6 @@ Node <- R6::R6Class(
         ancestors <- c(private$parent$GetAncestors(), self)
         return(ancestors)
       }
-
     }
 
     ), # end of public
