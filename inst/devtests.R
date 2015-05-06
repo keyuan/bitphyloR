@@ -46,8 +46,9 @@ for (i in seq_along(res1)){
 #        layout = layout.reingold.tilford(g),
 #        vertex.label = get.vertex.attribute(g, name = "size"),
 #        vertex.size = 15, edge.arrow.size = 0.5)
+  root1 = tssbMCMC$root
+  root2 = tssbMCMC$CullTree()$root
 
-  tssbMCMC$CullTree()
   ww <- tssbMCMC$GetMixture()$weight
   res3[i] <- sum(ww)
   res4[i] <- length(ww)
@@ -64,17 +65,9 @@ for (i in seq_along(res1)){
 
 }
 
-tssbMCMC$CullTree()
-
-Descend <- function(root) {
-  Map(Descend, root$children)
-
-  root$node$ResampleParams()
-  return(root=root)
-}
-
-root <- tssbMCMC$root
-
-Descend(root)
 
 
+r1p= tssbMCMC$root$node$params
+r1 = tssbMCMC$root
+r2p=tssbMCMC$ResampleNodeParameters()$root$node$params
+r2 = tssbMCMC$root
