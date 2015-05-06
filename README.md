@@ -1,3 +1,6 @@
+---
+output: pdf_document
+---
 bitphyloR
 =========
 
@@ -8,3 +11,11 @@ BitPhylogeny in R
 ## Documentation
 
 * [Introduction to TSSB](http://rpubs.com/keyuan/tssb)
+
+## Docker image
+
+Docker Hub: [bitphylor-docker](https://registry.hub.docker.com/u/keyuan/bitphylor-docker/)
+
+'''
+docker pull keyuan/bitphylor-docker
+'''
