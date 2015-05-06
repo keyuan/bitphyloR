@@ -29,9 +29,17 @@ TrimZeros <- function(x, trim = "fb") {
   }
 }
 
+repmat <- function(x, n, m){
+  x <- as.matrix(x)
+  return(kronecker(matrix(1,n,m),x))
+}
 
 ConvertFunctionNameToVariableName <- function(f) {
   res <- unlist(strsplit(gsub("(.)([[:upper:]])", "\\1 \\2", f), " "))
   res[2] <- paste(tolower(substring(res[2], 1, 1)), substring(res[2], 2), sep = "" )
   return(paste(res[-1], collapse = "" ))
+}
+
+ComparePath <- function(x, y) {
+
 }
