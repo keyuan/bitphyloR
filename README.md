@@ -1,6 +1,3 @@
----
-output: pdf_document
----
 bitphyloR
 =========
 
@@ -16,6 +13,6 @@ BitPhylogeny in R
 
 Docker Hub: [bitphylor-docker](https://registry.hub.docker.com/u/keyuan/bitphylor-docker/)
 
-'''
+```
 docker pull keyuan/bitphylor-docker
-'''
+```
