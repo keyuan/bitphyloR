@@ -69,5 +69,7 @@ for (i in seq_along(res1)){
 
 r1p= tssbMCMC$root$node$params
 r1 = tssbMCMC$root
-r2p=tssbMCMC$ResampleNodeParameters()$root$node$params
+r2p= tssbMCMC$ResampleNodeParameters()$root$node$params
 r2 = tssbMCMC$root
+
+tssbMCMC$ResampleAssignments()
