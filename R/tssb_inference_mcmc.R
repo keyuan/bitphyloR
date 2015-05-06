@@ -22,7 +22,7 @@ TssbMCMC <- R6::R6Class(
       lengths <- c()
 
       for (n in seq_len(self$numOfData)) {
-        ancestors <- self$assignments[n]$GetAncestors()
+        ancestors <- self$assignments[[n]]$GetAncestors()
         current <-  self$root
         indices <- c()
         for (anc in seq_along(ancestors)) {
@@ -31,12 +31,12 @@ TssbMCMC <- R6::R6Class(
               Map(function(x) identical(x,anc), current$children)
             )
           )
-          current = current$children[index]
+          current = current$children[[index]]
           indices = c(indices, index)
         }
         maxU <- 1
         minU <- 0
-        llhS = log(runif(1)) + self$assignments[n]$GetNodeLogProb(self$data[n,])
+        llhS = log(runif(1)) + self$assignments[[n]]$GetNodeLogProb(self$data[n,])
         while (T) {
           newU <- (maxU - minU)*runif(1) + minU
           res <- self$FindNode(newU)
@@ -44,10 +44,10 @@ TssbMCMC <- R6::R6Class(
           newPath <- res$path
           newLlh <- newNode$LogProb(self$data[n,])
           if (newLlh > llhS) {
-            if (!identical(newNode != self$assignments[n])) {
-              self$assignments[n]$RemoveDatum(n)
+            if (!identical(newNode != self$assignments[[n]])) {
+              self$assignments[[n]]$RemoveDatum(n)
               newNode$AddDatum(n)
-              self.assignments[n] = newNode
+              self.assignments[[n]] = newNode
               break
             }
           } else if (abs(maxU - minU) < .Machine$double.eps) {
