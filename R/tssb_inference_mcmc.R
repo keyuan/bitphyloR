@@ -21,7 +21,7 @@ TssbMCMC <- R6::R6Class(
     ResampleAssignments = function() {
       lengths <- c()
 
-      for (n in 1:self$numOfData) {
+      for (n in seq_len(self$numOfData)) {
         ancestors <- self$assignments[n]$GetAncestors()
         current <-  self$root
         indices <- c()
@@ -157,8 +157,10 @@ TssbMCMC <- R6::R6Class(
       Descend <- function(root) {
         Map(Descend, root$children)
         root$node$ResampleParams()
+        return(root=root)
       }
-      Descend(self$root)
+      self$root <- Descend(self$root)
+      invisible(self)
     }
 
   )
