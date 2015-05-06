@@ -108,7 +108,7 @@ Normal <- R6::R6Class(
       }
 
       if (is.null(private$parent)) {
-        parentParams <- self$initMean
+        parentParams <- private$initMean
       } else {
         parentParams <- private$parent$params
       }
@@ -139,18 +139,19 @@ Normal <- R6::R6Class(
            numOfData*chol2inv(chol(self$sigma))%*%dataMean)
 
       self$params <- rmvnorm(n = 1,
-                            mean = postParamsMean,
-                            sigma = postParamsCov)
+                             mean = postParamsMean,
+                             sigma = postParamsCov)
 
       # Posterior for node covarirance
       if (numOfData > 0) {
         postSigmaDof <- priorSigmaDof + numOfData
         ## need fix
-        tmpVec <- nodeData - self$params
+        tmpVec <- nodeData - repmat(self$params, numOfData, 1)
         postSigmaScale <- priorSigmaScale + t(tmpVec) %*% tmpVec
-
         self$sigma <- riwish(v = postSigmaDof, S = postSigmaScale)
       }
+      print(self$params)
+      invisible(self)
     },
 
     ResampleHyperParams = function() {
