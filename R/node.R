@@ -130,7 +130,7 @@ Node <- R6::R6Class(
 
     GetAncestors = function() {
       ancestors = c()
-      if (identical(private$parent, emptyenv())) {
+      if (is.null(private$parent)) {
         return(self)
       } else {
         ancestors <- c(private$parent$GetAncestors(), self)
