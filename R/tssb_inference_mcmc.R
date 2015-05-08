@@ -25,10 +25,10 @@ TssbMCMC <- R6::R6Class(
         ancestors <- self$assignments[[n]]$GetAncestors()
         current <-  self$root
         indices <- c()
-        for (anc in seq_along(ancestors)) {
+        for (anc in seq_along(ancestors[-1])) {
           index = which(
             unlist(
-              Map(function(x) identical(x,anc), current$children)
+              Map(function(x) identical(x$node, ancestors[[anc+1]]), current$children)
             )
           )
           current = current$children[[index]]
@@ -36,18 +36,19 @@ TssbMCMC <- R6::R6Class(
         }
         maxU <- 1
         minU <- 0
-        llhS = log(runif(1)) + self$assignments[[n]]$GetNodeLogProb(self$data[n,])
+        llhS = log(runif(1)) + self$assignments[[n]]$GetLogProb(self$data[n,])
         while (T) {
           newU <- (maxU - minU)*runif(1) + minU
           res <- self$FindNode(newU)
           newNode <- res$node
           newPath <- res$path
-          newLlh <- newNode$LogProb(self$data[n,])
+          newLlh <- newNode$GetLogProb(self$data[n,])
           if (newLlh > llhS) {
-            if (!identical(newNode != self$assignments[[n]])) {
+            if (!identical(newNode, self$assignments[[n]])) {
               self$assignments[[n]]$RemoveDatum(n)
               newNode$AddDatum(n)
-              self.assignments[[n]] = newNode
+              self$assignments[[n]] <- newNode
+              self$root <- res$root
               break
             }
           } else if (abs(maxU - minU) < .Machine$double.eps) {
@@ -134,7 +135,7 @@ TssbMCMC <- R6::R6Class(
 
         newChildren <- c()
         for (k in newOrder) {
-          child = root$children[k]
+          child <- root$children[k]
           newChildren <- c(newChildren, child)
           root$children[[k]] <- Descend(root$children[[k]], depth + 1)
         }
@@ -143,8 +144,8 @@ TssbMCMC <- R6::R6Class(
                function(k) {root$children[[k]]$node$Kill()
                             root$children[[k]] <- list()})
 
-        root$children = newChildren
-        root$sticks   = rep(0, length(newChildren))
+        root$children <- newChildren
+        root$sticks <- rep(0, length(newChildren))
 
         return(root)
       }
