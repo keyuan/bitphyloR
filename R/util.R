@@ -40,6 +40,27 @@ ConvertFunctionNameToVariableName <- function(f) {
   return(paste(res[-1], collapse = "" ))
 }
 
-ComparePath <- function(x, y) {
+cmp <- function(x, y) {
+  if (x > y) {
+    return(1)
+  } else if (x < y) {
+    return(-1)
+  } else {
+    return(0)
+  }
+}
 
+ComparePath <- function(x, y) {
+  if (is.null(x) && is.null(y)) {
+    return(0)
+  } else if (is.null(x)) {
+    return(1)
+  } else if (is.null(y)) {
+    return(-1)
+  }
+
+  s1 <- paste(as.character(x), collapse = "")
+  s2 <- paste(as.character(y), collapse = "")
+
+  return(cmp(s2, s1))
 }
