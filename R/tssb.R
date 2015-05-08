@@ -202,8 +202,8 @@ TSSB <- R6::R6Class(
         Reduce(
           sum,
           Map(function(i) {
-            if (nodes[[i]]$GetNumOfLocalData) {
-              nodes[[i]]$GetNumOfLocalData()*weights[i] + nodes[[i]]$GetLogDataLikelihood()
+            if (nodes[[i]]$GetNumOfLocalData()) {
+              nodes[[i]]$GetNumOfLocalData()*weights[i] + nodes[[i]]$GetNodeLogProb()
               } else {
               0
               }
