@@ -72,4 +72,6 @@ r1 = tssbMCMC$root
 r2p= tssbMCMC$ResampleNodeParameters()$root$node$params
 r2 = tssbMCMC$root
 
+ll1 = tssbMCMC$GetLogMarginalDataLikelihood()
 tssbMCMC$ResampleAssignments()
+ll2 = tssbMCMC$GetLogMarginalDataLikelihood()
