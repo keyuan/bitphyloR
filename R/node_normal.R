@@ -150,7 +150,6 @@ Normal <- R6::R6Class(
         postSigmaScale <- priorSigmaScale + t(tmpVec) %*% tmpVec
         self$sigma <- riwish(v = postSigmaDof, S = postSigmaScale)
       }
-      print(self$params)
       invisible(self)
     },
 
