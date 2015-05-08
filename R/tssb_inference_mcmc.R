@@ -49,16 +49,16 @@ TssbMCMC <- R6::R6Class(
               newNode$AddDatum(n)
               self$assignments[[n]] <- newNode
               self$root <- res$root
-              break
             }
+            break
           } else if (abs(maxU - minU) < .Machine$double.eps) {
             warning("Slice sampler shrank down. Keep current state.")
             break
           } else {
-            res <- ComparePath(indices, newPath)
-            if (res < 0) {
+            pathCmp <- ComparePath(indices, newPath)
+            if (pathCmp < 0) {
               minU <- newU
-            } else if (res >0) {
+            } else if (pathCmp >0) {
               maxU <- newU
             } else {
               stop("Slice sampler weirdness")
