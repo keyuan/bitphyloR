@@ -113,7 +113,7 @@ Normal <- R6::R6Class(
         parentParams <- private$parent$params
       }
 
-      if (is.null(childern)) {
+      if (length(childern)==0) {
         numOfChildren = 0
         childParamsMean = 0
       } else {
