@@ -43,3 +43,12 @@ tssbMCMC$CullTree()
 #        vertex.label = get.vertex.attribute(g, name = "size"),
 #        vertex.size = 15, edge.arrow.size = 0.5)
 
+fx <- function(x) {
+  - 0.5*(x-200)^2/(10)
+}
+
+n = 1000
+x = array(0, dim = n)
+for (i in seq_len(n-1)) {
+  x[i+1] = SliceSampler(x[i], fx, compwise = F, stepOut = T)
+}
