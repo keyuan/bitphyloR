@@ -1,3 +1,4 @@
+
 #' Convert beta random variables to edges in stick-breaking process
 #' @param sticks A beta random variable vector
 #' @return A vector of edges
@@ -28,6 +29,91 @@ TrimZeros <- function(x, trim = "fb") {
     return(x[1:max(nonZeroIds)])
   }
 }
+
+#' Sample from a user supplied distribution with slice sampler
+#' @param initX initial parameter
+#' @param logprob a user supplied log-distribution function
+#' @param sigma step size for slice construction
+#' @param setpOut use setp out procedure or not
+#' @param maxStepsOut maximum step out number
+#' @param compwise use component wise update or not
+#' @param verbose display steps taken
+#' @return a sample of parameter
+#' @export
+SliceSampler <- function(initX,
+                         logprob,
+                         sigma = 1.0,
+                         stepOut = T,
+                         maxStepsOut = 1000,
+                         compwise = F, verbose = F) {
+
+  DirectionSlice <- function(direction, initX) {
+
+    DirLogProb <- function(z) {
+      return(logprob(direction*z + initX))
+    }
+
+    upper <- sigma * runif(1)
+    lower <- upper - sigma
+    llhS <- log(runif(1)) + DirLogProb(0)
+
+    lowerStepsOut <- 0
+    upperStepsOut <- 0
+    if (stepOut) {
+      while (DirLogProb(lower) > llhS && lowerStepsOut < maxStepsOut) {
+        lowerStepsOut <- lowerStepsOut + 1
+        lower <- lower - sigma
+      }
+      while (DirLogProb(upper) > llhS && upperStepsOut < maxStepsOut) {
+        upperStepsOut <- upperStepsOut + 1
+        upper <- upper + sigma
+      }
+    }
+
+    stepIn <- 0
+    while(T) {
+      stepIn <- stepIn + 1
+      newZ <- (upper - lower) * runif(1) + lower
+      llhNew <- DirLogProb(newZ)
+      if (is.nan(llhNew)) {
+        stop("Slice sampler got a NaN")
+      }
+      if (llhNew > llhS) {
+        break
+      } else if (newZ < 0) {
+        lower <- newZ
+      } else if (newZ > 0) {
+        upper <- newZ
+      } else {
+        stop("Slice sampler shrank to zero")
+      }
+    }
+
+    return(direction*newZ + initX)
+  }
+
+  dims <- length(initX)
+  if (compwise) {
+    ordering <- sample(dims)
+    return(
+      Reduce(
+        sum,
+        Map(
+          function(d) {
+            direction = array(0, dim = dims)
+            direction[d] = 1
+            return(DirectionSlice(direction, initX))
+          },
+          ordering),
+        0)
+    )
+  } else {
+    direction <- rnorm(dims)
+    direction <- direction / sqrt(sum(direction^2))
+    return(DirectionSlice(direction, initX))
+  }
+}
+
 
 repmat <- function(x, n, m){
   x <- as.matrix(x)
@@ -64,3 +150,5 @@ ComparePath <- function(x, y) {
 
   return(cmp(s2, s1))
 }
+
+
