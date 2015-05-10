@@ -2,6 +2,7 @@
 
 export(Node)
 export(Normal)
+export(SliceSampler)
 export(SticksToEdges)
 export(TSSB)
 export(TrimZeros)
