@@ -5,7 +5,7 @@
 \title{Sample from a user supplied distribution with slice sampler}
 \usage{
 SliceSampler(initX, logprob, sigma = 1, stepOut = T, maxStepsOut = 1000,
-  compwise = F, verbose = F)
+  compwise = F, ...)
 }
 \arguments{
 \item{initX}{initial parameter}
@@ -18,7 +18,7 @@ SliceSampler(initX, logprob, sigma = 1, stepOut = T, maxStepsOut = 1000,
 
 \item{compwise}{use component wise update or not}
 
-\item{verbose}{display steps taken}
+\item{...}{additional args for logprob}
 
 \item{setpOut}{use setp out procedure or not}
 }

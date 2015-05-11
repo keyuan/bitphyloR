@@ -37,7 +37,7 @@ TrimZeros <- function(x, trim = "fb") {
 #' @param setpOut use setp out procedure or not
 #' @param maxStepsOut maximum step out number
 #' @param compwise use component wise update or not
-#' @param verbose display steps taken
+#' @param ... additional args for logprob
 #' @return a sample of parameter
 #' @export
 SliceSampler <- function(initX,
@@ -45,21 +45,21 @@ SliceSampler <- function(initX,
                          sigma = 1.0,
                          stepOut = T,
                          maxStepsOut = 1000,
-                         compwise = F) {
+                         compwise = F, ...) {
 
   DirectionSlice <- function(direction, initX) {
 
     DirLogProb <- function(z) {
-      return(logprob(direction*z + initX))
+      return(logprob(direction*z + initX, ...))
     }
 
+    llhS <- log(runif(1)) + DirLogProb(0)
     upper <- sigma * runif(1)
     lower <- upper - sigma
-    llhS <- log(runif(1)) + DirLogProb(0)
-
     lowerStepsOut <- 0
     upperStepsOut <- 0
     if (stepOut) {
+
       while (DirLogProb(lower) > llhS && lowerStepsOut < maxStepsOut) {
         lowerStepsOut <- lowerStepsOut + 1
         lower <- lower - sigma
@@ -76,6 +76,7 @@ SliceSampler <- function(initX,
       newZ <- (upper - lower) * runif(1) + lower
       llhNew <- DirLogProb(newZ)
       if (is.nan(llhNew)) {
+        cat("%f, %f, %f", newZ, initX, direction*newZ + initX, logprob(initX, ...))
         stop("Slice sampler got a NaN")
       }
       if (llhNew > llhS) {
@@ -142,10 +143,8 @@ ComparePath <- function(x, y) {
   } else if (is.null(y)) {
     return(-1)
   }
-
   s1 <- paste(as.character(x), collapse = "")
   s2 <- paste(as.character(y), collapse = "")
-
   return(cmp(s2, s1))
 }
 
