@@ -1,6 +1,3 @@
-
-# TSSB  -------------------------------------------------------------------
-
 #'TSSB is a R6 object of tree-structured stick breaking
 #' process
 #'
@@ -29,6 +26,12 @@ TSSB <- R6::R6Class(
     root = NULL,
     assignments = NULL,
     numOfData = NA,
+    minDpAlpha = NA,
+    maxDpAlpha = NA,
+    minDpLambda = NA,
+    maxDpLambda = NA,
+    minDpGamma = NA,
+    maxDpGamma = NA,
 
     # Methods -----------------------------------------------------------------
     initialize = function(rootNode = emptyenv(),
@@ -37,7 +40,10 @@ TSSB <- R6::R6Class(
                           dpLambda = 1,
                           data = NULL,
                           minDepth = 0,
-                          maxDepth = 25
+                          maxDepth = 25,
+                          minDpAlpha = 1e-6, maxDpAlpha = 50,
+                          minDpLambda = 1e-6, maxDpLambda = 1,
+                          minDpGamma = 1e-6, maxDpGamma = 50
                           ) {
       if (!is.environment(rootNode) ||
             identical(rootNode, emptyenv()) ||
@@ -51,6 +57,12 @@ TSSB <- R6::R6Class(
       self$minDepth <- minDepth
       self$maxDepth <- maxDepth
       self$dpLambda <- dpLambda
+      self$minDpAlpha <- minDpAlpha
+      self$maxDpAlpha <- maxDepth
+      self$minDpLambda <- minDpLambda
+      self$maxDpLambda <- maxDpLambda
+      self$minDpGamma <- minDpGamma
+      self$maxDpGamma <- maxDpGamma
       self$numOfData <- if (is.null(data)) 0 else nrow(self$data)
       self$root <- list(
         node     = rootNode,
@@ -214,8 +226,6 @@ TSSB <- R6::R6Class(
         )
       )
     }
-
-
   )
 )
 
