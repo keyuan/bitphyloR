@@ -1,35 +1,48 @@
 library(microbenchmark)
 
 set.seed(10)
-n = 1
-res1 = vector("numeric", n)
-res2 = res1
-res3 = res1
-res4 = res1
-res5 = res1
-res6 = res1
 
+testData = matrix(rnorm(50),50,1)
 n0 <- Normal$new()
 tssbMCMC <- TssbMCMC$new(n0,
-                         data = matrix(rnorm(50),50,1),
+                         data = testData,
                          dpAlpha = 1,
                          dpGamma = 1,
                          dpLambda = 1)
 
 
-tssbMCMC$ResampleAssignments()
+n = 100
 
-tssbMCMC$CullTree()
+ll = array(0, dim = n)
 
-tssbMCMC$ResampleNodeParameters()
+for (i in seq_len(n)) {
 
-tssbMCMC$ResampleSticks()
+  print(i)
 
-tssbMCMC$ResampleStickOrders()
+  tssbMCMC$ResampleAssignments()
 
-tssbMCMC$CullTree()
 
-tssbMCMC$ResampleHypers()
+  tssbMCMC$CullTree()
+
+  tssbMCMC$ResampleNodeParameters()
+
+
+  tssbMCMC$ResampleSticks()
+
+
+  tssbMCMC$ResampleStickOrders()
+
+
+  tssbMCMC$CullTree()
+
+
+  #tssbMCMC$ResampleHypers()
+
+  ll[i] <- tssbMCMC$GetLogMarginalDataLikelihood()
+
+}
+
+
 
 #   root1 <- tssbMCMC$root
 #   g <- tssbMCMC$ConvertTssbToIgraph()$g
