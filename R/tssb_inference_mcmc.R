@@ -162,8 +162,81 @@ TssbMCMC <- R6::R6Class(
       }
       self$root <- Descend(self$root)
       invisible(self)
-    }
+    },
 
+    ResampleHypers = function(sampleDpAlpha = T,
+                              sampleDpLambda = T,
+                              sampleDpGamma = T) {
+
+      ComputeDpMainLlh <- function(params,
+                                   sample = c("alpha", "lambda"),
+                                   fixParams = NULL) {
+        if (sample == "alpha") {
+          dpAlpha <- params
+          dpLambda <- fixParams
+        } else if (sample == "lambda") {
+          dpAlpha <- fixParams
+          dpLambda <- params
+        } else {
+          stop("sample has to be either 'alpha' or 'lambda' ")
+        }
+
+        if (dpAlpha < self$minDpAlpha || dpAlpha > self$maxDpAlpha) {
+          return(-Inf)
+        }
+        if (dpLambda < self$minDpLambda || dpLambda > self$maxDpLambda) {
+          return(-Inf)
+        }
+        Descend <- function(root, depth = 0) {
+          llh <- if (self$minDepth <= depth) {
+            dbeta(root$main, 1, dpLambda^depth*dpAlpha, log = TRUE)
+          } else {0}
+
+          for (i in seq_along(root$children)) {
+            res <- Descend(root$children[[i]], depth + 1)
+            llh <- llh + res$llh
+            root$children[[i]] = res$root
+          }
+          return(list(llh = llh, root = root))
+        }
+        return(Descend(self$root)$llh)
+      }
+
+      ComputeDpBranchLlh <- function(dpGamma) {
+        if (dpGamma < self$minDpGamma || dpGamma > self$maxDpGamma) {
+          return(-Inf)
+        }
+        Descend <- function(root) {
+          llh <- 0
+          for (i in seq_along(root$children)) {
+            llh <- llh + dbeta(root$sticks[i], 1, dpGamma, log = TRUE)
+            res <- Descend(root$children[[i]])
+            llh <- llh + res$llh
+            root$children[[i]] <- res$root
+          }
+          return(list(llh = llh, root = root))
+        }
+        return(Descend(self$root)$llh)
+      }
+
+      if (sampleDpAlpha) {
+        self$dpAlpha <- SliceSampler(self$dpAlpha,
+                                     ComputeDpMainLlh,
+                                     sample = "alpha",
+                                     fixParams = self$dpLambda)
+      }
+      if (sampleDpLambda) {
+        self$dpLambda <- SliceSampler(self$dpLambda,
+                                      ComputeDpMainLlh,
+                                      sample = "lambda",
+                                      fixParams = self$dpAlpha)
+
+      }
+      if (sampleDpGamma) {
+        self$dpGamma <- SliceSampler(self$dpGamma, ComputeDpBranchLlh)
+      }
+      invisible(self)
+    }
   )
 )
 
