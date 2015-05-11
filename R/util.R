@@ -45,7 +45,7 @@ SliceSampler <- function(initX,
                          sigma = 1.0,
                          stepOut = T,
                          maxStepsOut = 1000,
-                         compwise = F, verbose = F) {
+                         compwise = F) {
 
   DirectionSlice <- function(direction, initX) {
 
@@ -88,25 +88,23 @@ SliceSampler <- function(initX,
         stop("Slice sampler shrank to zero")
       }
     }
-
     return(direction*newZ + initX)
   }
 
   dims <- length(initX)
   if (compwise) {
     ordering <- sample(dims)
-    return(
-      Reduce(
-        sum,
-        Map(
-          function(d) {
-            direction = array(0, dim = dims)
-            direction[d] = 1
-            return(DirectionSlice(direction, initX))
-          },
-          ordering),
-        0)
-    )
+    newX <- Reduce(
+      rbind,
+      Map(
+        function(d) {
+          direction = array(0, dim = dims)
+          direction[d] = 1
+          return(direction*DirectionSlice(direction, initX))
+        },
+        ordering),
+      c())
+    return(colSums(newX))
   } else {
     direction <- rnorm(dims)
     direction <- direction / sqrt(sum(direction^2))
