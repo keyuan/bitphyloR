@@ -13,6 +13,14 @@ NodeTestTemplete <- function(f) {
       expect_that(n1$GetParent(), is_identical_to(n0))
     })
 
+    test_that("Remove a child node", {
+      n0 <- f$new()
+      n1 <- f$new(n0)
+      expect_that(n0$GetChildren()[[1]], is_identical_to(n1))
+      n0$RemoveChild(n1)
+      expect_that(length(n0$GetChildren()), is_equivalent_to(0))
+    })
+
     test_that("Spawn function generates a Node child", {
       n0 <- f$new()
       n1 <- n0$Spawn()
@@ -25,16 +33,8 @@ NodeTestTemplete <- function(f) {
     test_that("Kill function kills and pushes children",{
       n0 <- f$new()
       n1 <- n0$Spawn()
-      n2 <- n0$Spawn()
-      n21 <- n2$Spawn()
-      n22 <- n2$Spawn()
-      n0Children <- n0$GetChildren()
-      n2Children <- n2$GetChildren()
-      n2$Kill()
-      n0ChildrenAfterKill <- n0$GetChildren()
-
-      expect_that(length(n0ChildrenAfterKill),
-                  equals(length(n2Children) + length(n0Children ) - 1))
+      n1$Kill()
+      expect_that(length(n0$GetChildren()), is_equivalent_to(0))
     })
   })
 }
