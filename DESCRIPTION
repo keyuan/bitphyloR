@@ -21,6 +21,7 @@ Collate:
     'mvnorm.R'
     'node.R'
     'node_normal.R'
+    'node_pyclone.R'
     'tssb.R'
     'tssb_inference_batch_vb.R'
     'tssb_inference_mcmc.R'
