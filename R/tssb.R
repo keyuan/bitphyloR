@@ -193,7 +193,7 @@ TSSB <- R6::R6Class(
 
         if (length(keep) == 0) {
           root$sticks <- NULL
-          root$children <- list()
+          root$children <- NULL
         } else {
           root$sticks <- root$sticks[keep]
           root$children <- root$children[keep]
