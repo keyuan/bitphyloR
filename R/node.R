@@ -54,20 +54,17 @@ Node <- R6::R6Class(
 
     RemoveChild = function(child) {
       if (!missing(child)) {
-        private$children <- Filter(
+        private$children <- unlist(Filter(
           Negate(
             function(x) identical(child, x)
             ),
-          private$children)
-        child$SetParent()
+          private$children))
       }
       invisible(self)
     },
 
     Kill = function() {
-      if (!is.null(private$parent) &&
-            !identical(private$parent, emptyenv())) {
-        sapply(private$children, private$parent$AddChild)
+      if (!is.null(private$parent))  {
         private$parent$RemoveChild(self)
       }
       private$children = NULL
