@@ -134,14 +134,9 @@ ConvertFunctionNameToVariableName <- function(f) {
   return(paste(res[-1], collapse = "" ))
 }
 
-cmp <- function(x, y) {
-  if (x > y) {
-    return(1)
-  } else if (x < y) {
-    return(-1)
-  } else {
-    return(0)
-  }
+lexcmp <- function(vec1, vec2) {
+  index <- which.min(vec1 == vec2)  # find the first diff
+  sign(vec1[index] - vec2[index])   # assumes numeric
 }
 
 ComparePath <- function(x, y) {
@@ -152,9 +147,20 @@ ComparePath <- function(x, y) {
   } else if (is.null(y)) {
     return(-1)
   }
-  s1 <- paste(as.character(x), collapse = "")
-  s2 <- paste(as.character(y), collapse = "")
-  return(cmp(s2, s1))
+
+  n1 <- length(x)
+  n2 <- length(y)
+  if (n1 > n2) {
+    yy <- rep(0, n1)
+    yy[1:n2] <- y
+    return(lexcmp(yy, x))
+  } else if (n1 <n2) {
+    xx <- rep(0, n2)
+    xx[1:n1] <- x
+    return(lexcmp(y, xx))
+  } else {
+    return(lexcmp(y, x))
+  }
 }
 
 
