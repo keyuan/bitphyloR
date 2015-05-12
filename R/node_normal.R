@@ -133,7 +133,7 @@ Normal <- R6::R6Class(
       # Posterior for node mean
       tmpCov <- priorParamsCov + (1/numOfData) * self$sigma
       invTmpCov <- chol2inv(chol(tmpCov))
-      postParamsCov <- priorParamsCov + priorParamsCov%*%invTmpCov%*%priorParamsCov
+      postParamsCov <- priorParamsCov - priorParamsCov%*%invTmpCov%*%priorParamsCov
       postParamsMean <- postParamsCov%*%
         (chol2inv(chol(priorParamsCov))%*%priorParamsMean +
            numOfData*chol2inv(chol(self$sigma))%*%dataMean)
@@ -154,6 +154,10 @@ Normal <- R6::R6Class(
     },
 
     ResampleHyperParams = function() {
+      # sample drift
+      ComputeDriftLlh <- function() {
+
+      }
 
     }
   ),
