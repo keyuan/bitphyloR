@@ -154,11 +154,34 @@ Normal <- R6::R6Class(
     },
 
     ResampleHyperParams = function() {
-      # sample drift
-      ComputeDriftLlh <- function() {
 
+      if(!is.null(private$parent)) {
+        stop("Can only update hypers from root!")
       }
+      # sample drift
+      ComputeDriftLlh <- function(drift) {
+        drift <- diag(drift)
+        Descend <- function(root) {
+          llh <- 0
+          children <- root$GetChildren()
+          for (i in seq_along(children)) {
+            child <- children[[i]]
+            llh <- llh + dmvnorm(child$params, root$params, drift, log = TRUE)
+            llh <- llh + Descend(child)
+          }
+          return(llh)
+        }
+        return(
+          Descend(self) +
+            dmvnorm(self$params, private$initMean, drift, log = TRUE) +
+            diwish(drift, private$priorDriftDof, private$priorDriftScale)
+               )
+      }
+      tmp <- diag(private$drift)
 
+      tmp <- SliceSampler(tmp, ComputeDriftLlh)
+
+      private$drift <- diag(tmp)
     }
   ),
   private = list(
