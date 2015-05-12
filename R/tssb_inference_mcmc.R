@@ -42,13 +42,13 @@ TssbMCMC <- R6::R6Class(
           res <- self$FindNode(newU)
           newNode <- res$node
           newPath <- res$path
+          self$root <- res$root
           newLlh <- newNode$GetLogProb(self$data[n,])
           if (newLlh > llhS) {
             if (!identical(newNode, self$assignments[[n]])) {
               self$assignments[[n]]$RemoveDatum(n)
               newNode$AddDatum(n)
               self$assignments[[n]] <- newNode
-              self$root <- res$root
             }
             break
           } else if (abs(maxU - minU) < .Machine$double.eps) {
@@ -61,6 +61,9 @@ TssbMCMC <- R6::R6Class(
             } else if (pathCmp >0) {
               maxU <- newU
             } else {
+              cat("id: ", n, " indices: ",indices,  " newPath: ", newPath,
+                  " llhS: ", llhS, " llhNew: ", newLlh,
+                  " newU: ", newU, " minU: ", minU, " maxU: ", maxU)
               stop("Slice sampler weirdness")
             }
           }
