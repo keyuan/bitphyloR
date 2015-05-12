@@ -80,14 +80,14 @@ TssbMCMC <- R6::R6Class(
           root$children[[i]] <- res$root
           postAlpha <- 1 + childData
           postBeta <- self$dpGamma + dataDown
-          root$sticks[i] <- rbeta(1, postAlpha, postBeta)
+          root$sticks[i] <- BoundBeta(1, postAlpha, postBeta)
           dataDown <- dataDown + childData
         }
 
         dataHere <- root$node$GetNumOfLocalData()
         postAlpha <- 1 + dataHere
         postBeta <- (self$dpLambda^depth) * self$dpAlpha + dataDown
-        root$main = if (self$minDepth <= depth) rbeta(1, postAlpha, postBeta) else 0.0
+        root$main = if (self$minDepth <= depth) BoundBeta(1, postAlpha, postBeta) else 0.0
         return(list(nodeData = dataHere + dataDown, root = root))
       }
 
@@ -113,13 +113,13 @@ TssbMCMC <- R6::R6Class(
             subWeights <- subWeights/sum(subWeights)
             index <- sum(u > cumsum(subWeights))
             if (index == length(subIndices)) {
-              root$sticks <- c(root$sticks, rbeta(1, 1, self$dpGamma))
+              root$sticks <- c(root$sticks, BoundBeta(1, 1, self$dpGamma))
               root$children <- c(root$children,
                                  list(
                                    list(
                                      node = root$node$Spawn(),
                                      main = if (self$minDepth <= depth +1 ) {
-                                       rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
+                                       BoundBeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
                                      } else {0},
                                      sticks = c(),
                                      children = list())))
