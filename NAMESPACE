@@ -3,6 +3,7 @@
 export(BoundBeta)
 export(Node)
 export(Normal)
+export(PyClone)
 export(SliceSampler)
 export(SticksToEdges)
 export(TSSB)
