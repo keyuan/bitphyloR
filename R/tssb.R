@@ -66,7 +66,7 @@ TSSB <- R6::R6Class(
       self$numOfData <- if (is.null(data)) 0 else nrow(self$data)
       self$root <- list(
         node     = rootNode,
-        main     = if (self$minDepth == 0) rbeta(1, 1, self$dpAlpha) else 0,
+        main     = if (self$minDepth == 0) BoundBeta(1, 1, self$dpAlpha) else 0,
         sticks   = c(),
         children = list())
       rootNode$tssb <- self
@@ -95,13 +95,13 @@ TSSB <- R6::R6Class(
           while (length(root$children) == 0
                  || u > (1 - prod(1 - root$sticks))
                  ) {
-            root$sticks <- c(root$sticks, rbeta(1, 1, self$dpGamma))
+            root$sticks <- c(root$sticks, BoundBeta(1, 1, self$dpGamma))
             root$children <- c(root$children,
                               list(
                                 list(
                                   node = root$node$Spawn(),
                                   main = if (self$minDepth <= (depth+1)) {
-                                    rbeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
+                                    BoundBeta(1, 1, (self$dpLambda^(depth+1))*self$dpAlpha)
                                     } else {0},
                                   sticks = NULL,
                                   children = NULL
@@ -214,13 +214,13 @@ TSSB <- R6::R6Class(
         Reduce(
           sum,
           Map(function(i) {
-            if (length(nodes) == 1) {
+            if (length(weights) == 1) {
               node <- nodes
             } else {
               node <- nodes[[i]]
             }
             if (node$GetNumOfLocalData()) {
-              node$GetNumOfLocalData()*weights[i] + nodes$GetNodeLogProb()
+              node$GetNumOfLocalData()*weights[i] + node$GetNodeLogProb()
               } else {
               0
               }
