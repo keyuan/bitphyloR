@@ -37,6 +37,7 @@ TrimZeros <- function(x, trim = "fb") {
 #' @param setpOut use setp out procedure or not
 #' @param maxStepsOut maximum step out number
 #' @param compwise use component wise update or not
+#' @param verbose disply steps out&in
 #' @param ... additional args for logprob
 #' @return a sample of parameter
 #' @export
@@ -44,8 +45,8 @@ SliceSampler <- function(initX,
                          logprob,
                          sigma = 1.0,
                          stepOut = T,
-                         maxStepsOut = 1000,
-                         compwise = F, ...) {
+                         maxStepsOut = 100,
+                         compwise = F, verbose = F, ...) {
 
   DirectionSlice <- function(direction, initX) {
 
@@ -70,9 +71,9 @@ SliceSampler <- function(initX,
       }
     }
 
-    stepIn <- 0
+    stepsIn <- 0
     while(T) {
-      stepIn <- stepIn + 1
+      stepsIn <- stepsIn + 1
       newZ <- (upper - lower) * runif(1) + lower
       llhNew <- DirLogProb(newZ)
       if (is.nan(llhNew)) {
@@ -88,6 +89,10 @@ SliceSampler <- function(initX,
       } else {
         stop("Slice sampler shrank to zero")
       }
+    }
+
+    if (verbose) {
+      cat("Steps Out:", lowerStepsOut, upperStepsOut, " Steps In:", stepsIn)
     }
     return(direction*newZ + initX)
   }
