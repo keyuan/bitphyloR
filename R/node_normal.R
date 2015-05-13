@@ -160,7 +160,12 @@ Normal <- R6::R6Class(
       }
       # sample drift
       ComputeDriftLlh <- function(drift) {
-        drift <- diag(drift)
+
+        drift <- diag(drift, length(drift))
+
+        if (sum(drift < 0) > 0) {
+          return (-Inf)
+        }
         Descend <- function(root) {
           llh <- 0
           children <- root$GetChildren()
@@ -178,10 +183,11 @@ Normal <- R6::R6Class(
                )
       }
       tmp <- diag(private$drift)
+      tmp <- SliceSampler(tmp, ComputeDriftLlh, stepOut = F)
+      private$drift <- diag(tmp, length(tmp))
 
-      tmp <- SliceSampler(tmp, ComputeDriftLlh)
 
-      private$drift <- diag(tmp)
+
     }
   ),
   private = list(
