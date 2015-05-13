@@ -3,8 +3,8 @@ library(microbenchmark)
 set.seed(10)
 
 m = 100
-testData = rbind( matrix(0.1*rnorm(m)+20,m,1),  matrix(rnorm(m)+10,m,1))
-n0 <- Normal$new()
+testData = rbind(matrix(0.051*rnorm(m)+0.4,m,1), matrix( 0.01*rnorm(m)+0.6,m,1))
+n0 <- Normal$new(priorSigmaScale = diag(0.1, length(0.1)))
 tssbMCMC <- TssbMCMC$new(n0,
                          data = testData,
                          dpAlpha = 1,
@@ -12,7 +12,7 @@ tssbMCMC <- TssbMCMC$new(n0,
                          dpLambda = 1)
 
 #
-n = 1
+n = 1000
 gg = vector(mode = "list", length = n)
 ll = array(0, dim = n)
 pp = array(0, dim = c(n, 2*m))
@@ -20,6 +20,7 @@ ss = array(0, dim = c(n, 2*m))
 dpa = array(0, dim = n)
 dpl = array(0, dim = n)
 dpg = array(0, dim = n)
+dd = array(0, dim = n)
 
 for (i in seq_len(n)) {
 
@@ -48,7 +49,7 @@ for (i in seq_len(n)) {
   dpa[i] <- tssbMCMC$dpAlpha
   dpl[i] <- tssbMCMC$dpLambda
   dpg[i] <- tssbMCMC$dpGamma
-
+  dd[i] <- n0$GetDrift()
   gg[[i]] <- tssbMCMC$ConvertTssbToIgraph()$g
 }
 
