@@ -4,7 +4,7 @@
 \alias{SliceSampler}
 \title{Sample from a user supplied distribution with slice sampler}
 \usage{
-SliceSampler(initX, logprob, sigma = 1, stepOut = T, maxStepsOut = 1000,
+SliceSampler(initX, logprob, sigma = 1, stepOut = T, maxStepsOut = 100,
   compwise = F, ...)
 }
 \arguments{
