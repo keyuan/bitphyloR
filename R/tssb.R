@@ -210,26 +210,26 @@ TSSB <- R6::R6Class(
       res <- self$GetMixture()
       weights <- res$weight
       nodes <- res$node
-      return(
-        Reduce(
-          sum,
-          Map(function(i) {
-            if (length(weights) == 1) {
-              node <- nodes
-            } else {
-              node <- nodes[[i]]
-            }
-            if (node$GetNumOfLocalData()) {
-              node$GetNumOfLocalData()*weights[i] + node$GetNodeLogProb()
-              } else {
-              0
-              }
-            },
-            seq_along(weights)
-            ),
-          0
-        )
+
+      ll <- Reduce(
+        sum,
+        Map(function(i) {
+          if (length(weights) == 1) {
+            node <- nodes
+          } else {
+            node <- nodes[[i]]
+          }
+          if (node$GetNumOfLocalData()) {
+            node$GetNumOfLocalData()*weights[i] + node$GetNodeLogProb()
+          } else {
+            0
+          }
+        },
+        seq_along(weights)
+        ),
+        0
       )
+      return(list(ll=ll, ww = weights, nn = nodes))
     }
   )
 )
