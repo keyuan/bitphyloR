@@ -22,11 +22,14 @@ Normal <- R6::R6Class(
     params = NULL,
 
     initialize = function(parent = NULL, tssb = NULL,
-                          drift = diag(1), priorDriftScale = diag(1), priorDriftDof = 1,
-                          priorSigmaScale = diag(1), priorSigmaDof = 1, initMean = 0) {
+                          drift = diag(1), priorDriftScale = diag(1),
+                          priorDriftDof = nrow(priorDriftScale) + 1,
+                          priorSigmaScale = diag(1),
+                          priorSigmaDof = nrow(priorSigmaScale) + 1,
+                          initMean = array(0, dim=c(1, nrow(priorSigmaScale)))) {
       super$initialize(parent = parent, tssb = tssb)
       if (is.null(parent)) {
-        private$drift <- drift
+        private$drift <- riwish(v = priorDriftDof, S = priorDriftScale)
         private$priorDriftScale <- priorDriftScale
         private$priorDriftDof <-priorDriftDof
         private$priorSigmaScale <- priorSigmaScale
@@ -96,13 +99,15 @@ Normal <- R6::R6Class(
     ResampleParams = function() {
       nodeData <- self$GetData()
       drift <- self$GetDrift()
-      numOfData <- nrow(nodeData)
+      numOfData <- self$GetNumOfLocalData()
       priorSigmaScale <- self$GetPriorSigmaScale()
       priorSigmaDof <- self$GetPriorSigmaDof()
-      childern <- private$children
+      numOfChildren <- length(private$children)
 
       if (numOfData == 0) {
         dataMean = 0
+      } else if (numOfData == 1){
+        dataMean = nodeData
       } else {
         dataMean = colMeans(nodeData)
       }
@@ -113,16 +118,14 @@ Normal <- R6::R6Class(
         parentParams <- private$parent$params
       }
 
-      if (length(childern)==0) {
-        numOfChildren = 0
+      if (numOfChildren ==0 ) {
         childParamsMean = 0
       } else {
         childParams <- Reduce(
           rbind,
-          Map(function(x) {x$params}, childern),
+          Map(function(x) {x$params}, private$children),
           c()
         )
-        numOfChildren <- nrow(childParams)
         childParamsMean <- colMeans(childParams)
       }
 
@@ -131,12 +134,16 @@ Normal <- R6::R6Class(
       priorParamsCov <- drift / (numOfChildren + 1)
 
       # Posterior for node mean
-      tmpCov <- priorParamsCov + (1/numOfData) * self$sigma
-      invTmpCov <- chol2inv(chol(tmpCov))
-      postParamsCov <- priorParamsCov - priorParamsCov%*%invTmpCov%*%priorParamsCov
-      postParamsMean <- postParamsCov%*%
-        (chol2inv(chol(priorParamsCov))%*%priorParamsMean +
-           numOfData*chol2inv(chol(self$sigma))%*%dataMean)
+      if (numOfData == 0) {
+        postParamsMean <- priorParamsMean
+        postParamsCov <- priorParamsCov
+      } else {
+        tmpCov <- priorParamsCov + (1/numOfData) * self$sigma
+        invTmpCov <- chol2inv(chol(tmpCov))
+        postParamsCov <- priorParamsCov - priorParamsCov%*%invTmpCov%*%priorParamsCov
+        postParamsMean <- (priorParamsMean%*%chol2inv(chol(priorParamsCov)) +
+                             numOfData*dataMean%*%chol2inv(chol(self$sigma))) %*% postParamsCov
+      }
 
       self$params <- rmvnorm(n = 1,
                              mean = postParamsMean,
@@ -145,7 +152,6 @@ Normal <- R6::R6Class(
       # Posterior for node covarirance
       if (numOfData > 0) {
         postSigmaDof <- priorSigmaDof + numOfData
-        ## need fix
         tmpVec <- nodeData - repmat(self$params, numOfData, 1)
         postSigmaScale <- priorSigmaScale + t(tmpVec) %*% tmpVec
         self$sigma <- riwish(v = postSigmaDof, S = postSigmaScale)
@@ -179,15 +185,11 @@ Normal <- R6::R6Class(
         return(
           Descend(self) +
             dmvnorm(self$params, private$initMean, drift, log = TRUE) +
-            diwish(drift, private$priorDriftDof, private$priorDriftScale)
-               )
+            diwish(drift, private$priorDriftDof, private$priorDriftScale))
       }
       tmp <- diag(private$drift)
       tmp <- SliceSampler(tmp, ComputeDriftLlh, stepOut = F)
       private$drift <- diag(tmp, length(tmp))
-
-
-
     }
   ),
   private = list(
