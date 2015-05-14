@@ -4,12 +4,21 @@
 \alias{RunNormal}
 \title{Fit a tssb with normal node with data via mcmc}
 \usage{
-RunNormal(data, numOfMCMC, tssb = NULL)
+RunNormal(data, numOfMCMC = 1000, burnIn = 0, dims = ncol(data),
+  tssb = NULL, ...)
 }
 \arguments{
-\item{data}{a data matrix}
+\item{data}{a data matrix or list}
 
 \item{numOfMCMC}{mcmc iterations}
+
+\item{burnIn}{burn-in number}
+
+\item{dims}{dimension of data}
+
+\item{tssb}{a use supplied TssbMCMC object}
+
+\item{...}{additional parameters to node class generator}
 }
 \value{
 A list of traces
