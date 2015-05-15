@@ -64,7 +64,7 @@ RunNormal <- function (data,
       dpa[i] <- tssb$dpAlpha
       dpl[i] <- tssb$dpLambda
       dpg[i] <- tssb$dpGamma
-      dd[,,i] <- n0$GetDrift()
+      dd[,,i] <- root$GetDrift()
       gg[[i]] <- tssb$ConvertTssbToIgraph()$g
     }
 
@@ -75,7 +75,8 @@ RunNormal <- function (data,
     }
   }
 
-  return(list(likelihood = ll,
+  return(list(tssb = tssb,
+              likelihood = ll,
               mu = pp,
               sigma = ss,
               dpAlpha = dpa,
