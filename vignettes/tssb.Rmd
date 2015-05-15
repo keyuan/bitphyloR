@@ -39,6 +39,7 @@ tssb <- TSSB$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1,
 tssb
 ```
 
+The tssb object generates an initial configuration of weights and tree.
 ```{r}
 res <- tssb$GetMixture()
 barplot(res$weight)
@@ -53,7 +54,7 @@ plot.igraph(g, layout = layout.reingold.tilford(g),
      vertex.size = 15, edge.arrow.size = 0.5)
 ```
 
-
+There are several empty leaf nodes. They can be removed by the `CullTree` function 
 ```{r}
 tssb$CullTree()
 res3 <- tssb$ConvertTssbToIgraph()
@@ -63,19 +64,80 @@ plot.igraph(g, layout = layout.reingold.tilford(g),
      vertex.size = 15, edge.arrow.size = 0.5)
 ```
 
-## Inference classes 
+## Inference via MCMC
+
+Let's test a simple dataset. 
 ```{r}
+
 set.seed(fixedSeed)
-tssbMCMC <- TssbMCMC$new(n0, data = matrix(rnorm(50),50,1), dpAlpha = 1, dpGamma = 1, dpLambda = 1)
+m <- 200
+dims <- 2
+testData <- rbind(matrix(0.051*rnorm(m)+0.4,m/2,dims),
+                  matrix( 0.01*rnorm(m)+0.6,m/2,dims))
+plot(testData[,1], testData[,2])
 ```
 
+Get an estimate of hyperparameters  
 ```{r}
-res <- tssbMCMC$GetMixture()
-barplot(res$weight)
-sum(res$weight)
+empCov <- cov(testData)
+priorSigmaScale = empCov + diag(rep(1e-6,dims), dims)
+priorDriftScale = priorSigmaScale
 ```
 
+We are going fit the data with a tree-structured normal mixture model. To do that, initiate a Normal node object
 ```{r}
+n0 <- Normal$new(priorSigmaScale = priorSigmaScale, priorDriftScale = priorDriftScale)
+n0
+```
+
+Initiate a TssbMCMC node object for MCMC functions. The initialiser also generates a guess of the tree structure and mass distribution based on tssb parameters.
+```{r}
+tssbMCMC <- TssbMCMC$new(n0, data = testData, dpAlpha = 1, dpGamma = 1, dpLambda = 1)
+g0 <- tssbMCMC$ConvertTssbToIgraph()$g
+plot.igraph(g0, layout = layout.reingold.tilford(g0), 
+     vertex.label = get.vertex.attribute(g0, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+```
+
+Sample the assignment for each point to clusters
+```{r}
+par(mfrow = c(1, 2))
+plot.igraph(g0, layout = layout.reingold.tilford(g0), 
+     vertex.label = get.vertex.attribute(g0, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+tssbMCMC$ResampleAssignments()
+g1 <- tssbMCMC$ConvertTssbToIgraph()$g
+plot.igraph(g1, layout = layout.reingold.tilford(g1), 
+     vertex.label = get.vertex.attribute(g1, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+```
+
+Remove empty path
+```{r}
+par(mfrow = c(1, 2))
+plot.igraph(g1, layout = layout.reingold.tilford(g1), 
+     vertex.label = get.vertex.attribute(g1, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+tssbMCMC$CullTree()
+g2 <- tssbMCMC$ConvertTssbToIgraph()$g
+plot.igraph(g2, layout = layout.reingold.tilford(g2), 
+     vertex.label = get.vertex.attribute(g2, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+```
+
+Sample cluster parameters
+```{r}
+tssbMCMC$ResampleNodeParameters()
+```
+
+Sample cluster hyperparameters, normally parameters of the transition. Note that this function can only be called from the root node object
+```{r}
+n0$ResampleHyperParams()
+```
+
+Sample sticks according to the new configuration
+```{r}
+par(mfrow = c(1, 2))
 tssbMCMC$ResampleSticks()
 res <- tssbMCMC$GetMixture()
 barplot(res$weight)
@@ -83,24 +145,38 @@ sum(res$weight)
 ```
 
 ```{r}
-tssbMCMC$CullTree()
+tssbMCMC$ResampleStickOrders()
+res <- tssbMCMC$GetMixture()
+barplot(res$weight)
+sum(res$weight)
+```
+
+Compare the trees after 10 iterations
+```{r}
+par(mfrow = c(1, 2))
+g <- tssbMCMC$ConvertTssbToIgraph()$g
+plot.igraph(g, layout = layout.reingold.tilford(g), 
+     vertex.label = get.vertex.attribute(g, name = "size"),
+     vertex.size = 15, edge.arrow.size = 0.5)
+
+trace <- RunNormal(data = testData, numOfMCMC = 10, tssb = tssbMCMC)
 g <- tssbMCMC$ConvertTssbToIgraph()$g
 plot.igraph(g, layout = layout.reingold.tilford(g), 
      vertex.label = get.vertex.attribute(g, name = "size"),
      vertex.size = 15, edge.arrow.size = 0.5)
 ```
 
-```{r}
-g <- tssbMCMC$ResampleStickOrders()$ConvertTssbToIgraph()$g
-plot.igraph(g, layout = layout.reingold.tilford(g), 
-     vertex.label = get.vertex.attribute(g, name = "size"),
-     vertex.size = 15, edge.arrow.size = 0.5)
+Now, let's check a longer run,
+```{r, cache = T}
+traces <- RunNormal(data = testData, numOfMCMC = 1000, tssb = tssbMCMC)
 ```
 
+Plot the marginal likelihood trace and its autocorrelation function
 ```{r}
-g <- tssbMCMC$ResampleStickOrders()$ConvertTssbToIgraph()$g
-plot.igraph(g, layout = layout.reingold.tilford(g), 
-     vertex.label = get.vertex.attribute(g, name = "size"),
-     vertex.size = 15, edge.arrow.size = 0.5)
+par(mfrow = c(1, 2))
+plot(traces$likelihood, type = "l")
+acf(traces$likelihood, lag.max = 200)
 ```
+
+
 
