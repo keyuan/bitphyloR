@@ -2,6 +2,9 @@
 title: "Tree-structured stick breaking process"
 author: "Ke Yuan"
 date: "`r Sys.Date()`"
+header-includes:
+   - \usepackage{algorithm2e}
+
 output: 
   html_document:
     theme: null
@@ -12,6 +15,24 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
+
+$$ 
+\begin{algorithm}[H]
+ \KwData{this text}
+ \KwResult{how to write algorithm with \LaTeX2e }
+ initialization\;
+ \While{not at end of this document}{
+  read current\;
+  \eIf{understand}{
+   go to next section\;
+   current section becomes this one\;
+   }{
+   go back to the beginning of current section\;
+  }
+ }
+ \caption{How to write algorithms}
+\end{algorithm}
+$$
 
 ```{r echo = FALSE}
 # wch's setting 
