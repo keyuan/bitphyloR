@@ -2,9 +2,6 @@
 title: "Tree-structured stick breaking process"
 author: "Ke Yuan"
 date: "`r Sys.Date()`"
-header-includes:
-   - \usepackage{algorithm2e}
-
 output: 
   html_document:
     theme: null
@@ -15,24 +12,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
-
-$$ 
-\begin{algorithm}[H]
- \KwData{this text}
- \KwResult{how to write algorithm with \LaTeX2e }
- initialization\;
- \While{not at end of this document}{
-  read current\;
-  \eIf{understand}{
-   go to next section\;
-   current section becomes this one\;
-   }{
-   go back to the beginning of current section\;
-  }
- }
- \caption{How to write algorithms}
-\end{algorithm}
-$$
 
 ```{r echo = FALSE}
 # wch's setting 
@@ -111,7 +90,7 @@ n0 <- Normal$new(priorSigmaScale = priorSigmaScale, priorDriftScale = priorDrift
 n0
 ```
 
-Initiate a TssbMCMC node object for MCMC functions. The initialiser also generates a guess of the tree structure and mass distribution based on tssb parameters.
+Next, we initiate a TssbMCMC node object for MCMC functions. The initialiser also generates a guess of the tree structure and mass distribution based on tssb parameters.
 ```{r}
 tssbMCMC <- TssbMCMC$new(n0, data = testData, dpAlpha = 1, dpGamma = 1, dpLambda = 1)
 g0 <- tssbMCMC$ConvertTssbToIgraph()$g
@@ -188,7 +167,7 @@ plot.igraph(g, layout = layout.reingold.tilford(g),
 ```
 
 Now, let's check a longer run,
-```{r, cache = T}
+```{r, cache = TRUE}
 traces <- RunNormal(data = testData, numOfMCMC = 1000, tssb = tssbMCMC)
 ```
 
