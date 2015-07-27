@@ -27,6 +27,24 @@ process
 \item{\code{minDepth}}{}
 
 \item{\code{maxDepth}}{}
+
+\item{\code{root}}{}
+
+\item{\code{assignments}}{}
+
+\item{\code{numOfData}}{}
+
+\item{\code{minDpAlpha}}{}
+
+\item{\code{maxDpAlpha}}{}
+
+\item{\code{minDpLambda}}{}
+
+\item{\code{minDpLambda}}{}
+
+\item{\code{minDpGamma}}{}
+
+\item{\code{maxDpGamma}}{}
 }}
 \keyword{data}
 

@@ -3,12 +3,16 @@ NULL
 
 #' R6 class for inference via MCMC for TSSB.
 #'
-#'
 #' @docType class
 #' @importFrom R6 R6Class
 #' @export
 #' @format An \code{\link{R6Class}} generator object
 #' @keywords data
+#' @method ResampleAssignments Sample data assignments with Adams's slice-retrospective sampler
+#' @method ResampleSticks Sample sticks
+#' @method ResampleStickOrders Sample stick orders
+#' @method ResampleNodeParameters Sample node parameters
+#' @method ResampleHypers Sample TSSB hyper parameters
 
 TssbMCMC <- R6::R6Class(
   classname = "TssbMCMC",

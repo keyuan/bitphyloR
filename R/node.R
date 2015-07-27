@@ -10,8 +10,22 @@
 #' @field tssb: A TSSB object
 #' @field children: descentant node objects
 #' @field parent: parent node object
-#' @method initialize
+#' @method new
 #' @method GetChildren
+#' @method GetParent
+#' @method SetParent
+#' @method AddChild
+#' @method RemoveChild
+#' @method Kill
+#' @method Spawn
+#' @method HasData
+#' @method AddDatum
+#' @method RemoveDatum
+#' @method GetNumOfLocalData
+#' @method GetNumOfSubTreeData
+#' @method GetData
+#' @method GetAncestors
+
 Node <- R6::R6Class(
   classname = "Node",
 

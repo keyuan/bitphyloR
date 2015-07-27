@@ -1,7 +1,6 @@
 #'TSSB is a R6 object of tree-structured stick breaking
 #' process
 #'
-#'
 #' @docType class
 #' @importFrom R6 R6Class
 #' @export
@@ -13,6 +12,21 @@
 #' @field dpLambda
 #' @field minDepth
 #' @field maxDepth
+#' @field root
+#' @field assignments
+#' @field numOfData
+#' @field minDpAlpha
+#' @field maxDpAlpha
+#' @field minDpLambda
+#' @field minDpLambda
+#' @field minDpGamma
+#' @field maxDpGamma
+#' @method new TSSB constuctor
+#' @method FindNode Find node in tree, generate new node as needed
+#' @method GetMixture Compute the mixing weights and get the corresponding nodes
+#' @method ConvertTssbToIgraph Convert the tssb root list to an igraph object
+#' @method CullTree Remove empty leaf nodes
+#' @method GetLogMarginalDataLikelihood Compute the log marginal data likelihood
 TSSB <- R6::R6Class(
   classname = "TSSB",
   public = list(
